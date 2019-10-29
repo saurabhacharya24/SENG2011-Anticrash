@@ -1,0 +1,8 @@
+Commands for database
+
+
+sqlite3 anticrash.db                open database
+.tables                             display tables in database
+pragma table_info(<table_name>)     display columns in table
+.headers ON                         |
+.mode:                              | format columns for display
