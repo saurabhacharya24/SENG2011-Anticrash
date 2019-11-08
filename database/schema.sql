@@ -27,8 +27,6 @@ create table donor_samples (
 create table blood_bank (
     blood_type string,
     blood_amount integer, 
-    reserve_amount integer,
-    threshold_crossed_warning boolean,
     primary key (blood_type)
 );
 
