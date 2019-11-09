@@ -19,6 +19,7 @@ create table donor_samples (
     location_of_donation string,
     use_by_date Date,
     abnormalities boolean,
+    blood_amount integer,
     foreign key (donor_id) references donors(donor_id),
     foreign key (blood_type) references donors(blood_type)
 );
