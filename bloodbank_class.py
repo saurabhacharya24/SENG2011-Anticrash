@@ -1,7 +1,9 @@
 import sqlite3
 # from datetime import date
 
-
+# NOTE: 
+# Maybe add another column in donor_samples called 'is_sent'
+# which would show if the sample has been sent to a medical facility
 class blood_bank:
     def __init__(self):
         # amount in litres, maybe change it to ml
@@ -60,8 +62,7 @@ class blood_bank:
         # Do we need self.critical?
         return retval
 
-    def update_blood_amounts(self, b_type, quantity):
-        # add donation in litres
+    def add_blood(self, b_type, quantity):
         self.refresh_blood_amounts()
 
         updated_blood = self.blood_amounts[b_type] + quantity
@@ -75,12 +76,33 @@ class blood_bank:
 
         self.disconnect_db(conn)
 
+        self.check_quantities_bool()
+        self.check_quantities()
+        self.refresh_blood_amounts()
+
+    def discard_blood(self, b_type, quantity):
+        self.refresh_blood_amounts()
+
+        updated_blood = self.blood_amounts[b_type] - quantity
+
+        conn = self.connect_to_db()
+        cur = conn.cursor()
+
+        sql_adjust_level = """update blood_bank set blood_amount = ? where blood_type = ?"""
+        cur.execute(sql_adjust_level, (updated_blood, b_type))
+        conn.commit()
+
+        self.disconnect_db(conn)
+
+        self.check_quantities_bool()
+        self.check_quantities()
         self.refresh_blood_amounts()
 
     def refresh_blood_amounts(self):
         conn = self.connect_to_db()
         cur = conn.cursor()
 
+        # Most probably it should get blood from donor_samples
         sql_blood_amount = """select * from blood_bank"""
         cur.execute(sql_blood_amount)
         blood_type_and_amount = cur.fetchall()
@@ -91,6 +113,8 @@ class blood_bank:
         self.disconnect_db(conn)
 
     # INCOMPLETE
+    # ALSO: Maybe add another column in donor_samples called 'is_sent'
+    # which would show if the sample has been sent to a medical facility
     def check_freshness(self):
         conn = self.connect_to_db()
         cur = conn.cursor()
