@@ -1,34 +1,23 @@
 import sqlite3
+# from datetime import date
 
 
 class blood_bank:
     def __init__(self):
         # amount in litres, maybe change it to ml
         self.threshold = {
-            "O+": 400,
-            "O-": 200,
-            "A+": 400,
-            "A-": 200,
-            "B+": 300,
-            "B-": 100,
-            "AB+": 100,
-            "AB-": 100
+            "O+": 400000,
+            "O-": 200000,
+            "A+": 400000,
+            "A-": 200000,
+            "B+": 300000,
+            "B-": 100000,
+            "AB+": 100000,
+            "AB-": 100000
         }
 
         self.blood_amounts = {}
         self.refresh_blood_amounts()
-
-        # self.blood = {
-        #     "O+": 0,
-        #     "O-": 0,
-        #     "A+": 0,
-        #     "A-": 0,
-        #     "B+": 0,
-        #     "B-": 0,
-        #     "AB+": 0,
-        #     "AB-": 0
-        # }
-
         self.critical = False
 
     def get_all_blood_amounts(self):
@@ -71,29 +60,25 @@ class blood_bank:
         # Do we need self.critical?
         return retval
 
-    # def load_reserve(self):
-    #     for key in self.reserve:
-    #         self.blood[key] += self.threshold[key]
-    #         self.reserve[key] = 0
-
     def update_blood_amounts(self, b_type, quantity):
         # add donation in litres
         self.refresh_blood_amounts()
 
         updated_blood = self.blood_amounts[b_type] + quantity
 
-        conn = sqlite3.connect("database/anticrash.db")
+        conn = self.connect_to_db()
         cur = conn.cursor()
 
         sql_adjust_level = """update blood_bank set blood_amount = ? where blood_type = ?"""
         cur.execute(sql_adjust_level, (updated_blood, b_type))
         conn.commit()
-        conn.close()
+
+        self.disconnect_db(conn)
 
         self.refresh_blood_amounts()
 
     def refresh_blood_amounts(self):
-        conn = sqlite3.connect("database/anticrash.db")
+        conn = self.connect_to_db()
         cur = conn.cursor()
 
         sql_blood_amount = """select * from blood_bank"""
@@ -103,11 +88,11 @@ class blood_bank:
         for b_type, b_amount in blood_type_and_amount:
             self.blood_amounts[b_type] = b_amount
 
-        conn.close()
+        self.disconnect_db(conn)
 
     # INCOMPLETE
     def check_freshness(self):
-        conn = sqlite3.connect("database/anticrash.db")
+        conn = self.connect_to_db()
         cur = conn.cursor()
 
         sql_donor_samples = """select sample_id, blood_type, blood_amount, use_by_date, abnormalities
@@ -115,13 +100,18 @@ class blood_bank:
         cur.execute(sql_donor_samples)
         donor_samples = cur.fetchall()
 
-        conn.close()
+        self.disconnect_db(conn)
 
         return donor_samples
 
-    # def connect_db():
-    #     conn = sqlite3.connect("database/anticrash.db")
-    #     return
+    # Helper method to connect to db
+    def connect_to_db():
+        conn = sqlite3.connect("database/anticrash.db")
+        return conn
+
+    # Helper method to close db
+    def disconnect_db(conn):
+        conn.close()
 
 # Test Case
 
@@ -133,3 +123,4 @@ class blood_bank:
 # bank.update_blood_amounts("O+", 200)
 # print("\n")
 # bank.get_all_blood_amounts()
+# 
