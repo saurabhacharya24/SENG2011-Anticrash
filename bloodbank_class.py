@@ -1,4 +1,5 @@
 import sqlite3
+from helper_methods import *
 # from datetime import date
 
 # NOTE: 
@@ -119,27 +120,48 @@ class blood_bank:
         conn = self.connect_to_db()
         cur = conn.cursor()
 
-        sql_donor_samples = """select sample_id, blood_type, blood_amount, use_by_date, abnormalities
+        today = date.today()
+
+        fresh_blood_dict = {}
+
+        sql_donor_samples = """select blood_type, blood_amount, use_by_date, abnormalities, added_to_bank
                                from donor_samples"""
         cur.execute(sql_donor_samples)
         donor_samples = cur.fetchall()
+
+        for blood_type, blood_amount, use_by_date, abnormalities, added_to_bank in donor_samples:
+            expired = is_expired(use_by_date, today)
+
+            # Need to check if it's already added to bank
+            if not expired and not abnormalities:
+                # print(blood_type, blood_amount, use_by_date, abnormalities, added_to_bank)
+
+                if blood_type not in fresh_blood_dict:
+                    fresh_blood_dict[blood_type] = blood_amount
+                else:
+                    fresh_blood_dict[blood_type] += blood_amount
+
+        for k in sorted(fresh_blood_dict.keys()):
+            print(k, fresh_blood_dict[k])
 
         self.disconnect_db(conn)
 
         return donor_samples
 
     # Helper method to connect to db
-    def connect_to_db():
+    def connect_to_db(self):
         conn = sqlite3.connect("database/anticrash.db")
         return conn
 
     # Helper method to close db
-    def disconnect_db(conn):
+    def disconnect_db(self, conn):
         conn.close()
 
 # Test Case
 
-# bank = blood_bank()
+bank = blood_bank()
+check = bank.check_freshness()
+
 # print("Initial Blood Levels:\n")
 # bank.get_all_blood_amounts()
 # print("\n---")
