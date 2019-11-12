@@ -1,11 +1,10 @@
 from datetime import date
 from dateutil.parser import parse
 
-def is_expired(date_string):
+# today is of the form today = date.today() using datetime package
+def is_expired(date_string, today):
     day, month, year = date_string.split("/")
     expiry = month + "/" + day + "/" + year
-
-    today = date.today()
     todayf = today.strftime("%m/%d/%Y")
 
     expiry = parse(expiry)
