@@ -145,8 +145,6 @@ class Blood_bank:
 
         self.disconnect_db(conn)
 
-        return donor_samples
-
     # Helper method to connect to db
     def connect_to_db(self):
         conn = sqlite3.connect("database/anticrash.db")
