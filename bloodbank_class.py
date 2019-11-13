@@ -2,12 +2,10 @@ import sqlite3
 from helper_methods import *
 # from datetime import date
 
-# NOTE: 
-# Maybe add another column in donor_samples called 'is_sent'
-# which would show if the sample has been sent to a medical facility
+
 class Blood_bank:
     def __init__(self):
-        # amount in litres, maybe change it to ml
+        # amount in ml
         self.threshold = {
             "O+": 400000,
             "O-": 200000,
@@ -24,11 +22,11 @@ class Blood_bank:
         self.critical = False
 
     def get_all_blood_amounts(self):
-        self.refresh_blood_amounts()
+        self.check_freshness()
         return self.blood_amounts
 
     def get_blood_amount_by_type(self, b_type):
-        self.refresh_blood_amounts()
+        self.check_freshness()
         return self.blood_amounts[b_type]
 
     def get_threshold_level(self, blood_type):
@@ -38,7 +36,7 @@ class Blood_bank:
         return self.critical
 
     def check_quantities(self):
-        self.refresh_blood_amounts()
+        self.check_freshness()
 
         critical_levels = []
 
@@ -52,19 +50,19 @@ class Blood_bank:
         # based on type (which is in critical_levels)
 
     def check_quantities_bool(self):
-        self.refresh_blood_amounts()
+        self.check_freshness()
         retval = True
 
         for b_type in self.blood_amounts:
             if self.blood_amounts[b_type] < self.threshold[b_type]:
                 retval = False
+                self.critical = retval
+                return retval
 
-        # Maybe self.critical = retval?
-        # Do we need self.critical?
         return retval
 
     def add_blood(self, b_type, quantity):
-        self.refresh_blood_amounts()
+        self.check_freshness()
 
         updated_blood = self.blood_amounts[b_type] + quantity
 
@@ -77,12 +75,10 @@ class Blood_bank:
 
         self.disconnect_db(conn)
 
-        self.check_quantities_bool()
-        self.check_quantities()
-        self.refresh_blood_amounts()
+        self.check_freshness()
 
     def discard_blood(self, b_type, quantity):
-        self.refresh_blood_amounts()
+        self.check_freshness()
 
         updated_blood = self.blood_amounts[b_type] - quantity
 
@@ -95,15 +91,12 @@ class Blood_bank:
 
         self.disconnect_db(conn)
 
-        self.check_quantities_bool()
-        self.check_quantities()
-        self.refresh_blood_amounts()
+        self.check_freshness()
 
     def refresh_blood_amounts(self):
         conn = self.connect_to_db()
         cur = conn.cursor()
 
-        # Most probably it should get blood from donor_samples
         sql_blood_amount = """select * from blood_bank"""
         cur.execute(sql_blood_amount)
         blood_type_and_amount = cur.fetchall()
@@ -111,18 +104,17 @@ class Blood_bank:
         for b_type, b_amount in blood_type_and_amount:
             self.blood_amounts[b_type] = b_amount
 
+        self.check_quantities_bool()
+        self.check_quantities()
+
         self.disconnect_db(conn)
 
-    # INCOMPLETE
-    # ALSO: Maybe add another column in donor_samples called 'is_sent'
-    # which would show if the sample has been sent to a medical facility
+    # Do need to check if this makes sense
     def check_freshness(self):
         conn = self.connect_to_db()
         cur = conn.cursor()
 
         today = date.today()
-
-       # fresh_blood_dict = {}
 
         sql_donor_samples = """select blood_type, blood_amount, use_by_date, abnormalities, added_to_bank
                                from donor_samples"""
@@ -131,18 +123,15 @@ class Blood_bank:
 
         for blood_type, blood_amount, use_by_date, abnormalities, added_to_bank in donor_samples:
             expired = is_expired(use_by_date, today)
-            # Need to check if it's already added to bank
+
             if not expired and not abnormalities:
-                # print(blood_type, blood_amount, use_by_date, abnormalities, added_to_bank)
                 if not added_to_bank:
-                    self.blood_amounts[blood_type] += blood_amount
+                    self.add_blood(blood_type, blood_amount)
             else:
                 if added_to_bank:
-                    self.discard_blood(blood_type,blood_amount)
+                    self.discard_blood(blood_type, blood_amount)
 
-        # for k in sorted(fresh_blood_dict.keys()):
-        #     print(k, fresh_blood_dict[k])
-
+        self.refresh_blood_amounts()
         self.disconnect_db(conn)
 
     # Helper method to connect to db
