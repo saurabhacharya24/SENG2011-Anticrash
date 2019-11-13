@@ -5,7 +5,7 @@ from helper_methods import *
 # NOTE: 
 # Maybe add another column in donor_samples called 'is_sent'
 # which would show if the sample has been sent to a medical facility
-class blood_bank:
+class Blood_bank:
     def __init__(self):
         # amount in litres, maybe change it to ml
         self.threshold = {
@@ -122,7 +122,7 @@ class blood_bank:
 
         today = date.today()
 
-        fresh_blood_dict = {}
+       # fresh_blood_dict = {}
 
         sql_donor_samples = """select blood_type, blood_amount, use_by_date, abnormalities, added_to_bank
                                from donor_samples"""
@@ -131,18 +131,17 @@ class blood_bank:
 
         for blood_type, blood_amount, use_by_date, abnormalities, added_to_bank in donor_samples:
             expired = is_expired(use_by_date, today)
-
             # Need to check if it's already added to bank
             if not expired and not abnormalities:
                 # print(blood_type, blood_amount, use_by_date, abnormalities, added_to_bank)
+                if not added_to_bank:
+                    self.blood_amounts[blood_type] += blood_amount
+            else:
+                if added_to_bank:
+                    self.discard_blood(blood_type,blood_amount)
 
-                if blood_type not in fresh_blood_dict:
-                    fresh_blood_dict[blood_type] = blood_amount
-                else:
-                    fresh_blood_dict[blood_type] += blood_amount
-
-        for k in sorted(fresh_blood_dict.keys()):
-            print(k, fresh_blood_dict[k])
+        # for k in sorted(fresh_blood_dict.keys()):
+        #     print(k, fresh_blood_dict[k])
 
         self.disconnect_db(conn)
 
@@ -159,8 +158,8 @@ class blood_bank:
 
 # Test Case
 
-bank = blood_bank()
-check = bank.check_freshness()
+# bank = blood_bank()
+# check = bank.check_freshness()
 
 # print("Initial Blood Levels:\n")
 # bank.get_all_blood_amounts()
