@@ -18,11 +18,11 @@ class Blood_bank:
         }
 
         self.blood_amounts = {}
-        self.refresh_blood_amounts()
+        self.check_freshness()
         self.critical = False
 
     def get_all_blood_amounts(self):
-        self.check_freshness()
+        # self.check_freshness()
         return self.blood_amounts
 
     def get_blood_amount_by_type(self, b_type):
@@ -62,7 +62,7 @@ class Blood_bank:
         return retval
 
     def add_blood(self, b_type, quantity):
-        self.check_freshness()
+        self.refresh_blood_amounts()
 
         updated_blood = self.blood_amounts[b_type] + quantity
 
@@ -75,10 +75,10 @@ class Blood_bank:
 
         self.disconnect_db(conn)
 
-        self.check_freshness()
+        # self.check_freshness()
 
     def discard_blood(self, b_type, quantity):
-        self.check_freshness()
+        self.refresh_blood_amounts()
 
         updated_blood = self.blood_amounts[b_type] - quantity
 
@@ -91,7 +91,7 @@ class Blood_bank:
 
         self.disconnect_db(conn)
 
-        self.check_freshness()
+        # self.check_freshness()
 
     def refresh_blood_amounts(self):
         conn = self.connect_to_db()
@@ -111,25 +111,39 @@ class Blood_bank:
 
     # Do need to check if this makes sense
     def check_freshness(self):
+        self.refresh_blood_amounts()
         conn = self.connect_to_db()
         cur = conn.cursor()
 
         today = date.today()
 
-        sql_donor_samples = """select blood_type, blood_amount, use_by_date, abnormalities, added_to_bank
+        sql_donor_samples = """select *
                                from donor_samples"""
         cur.execute(sql_donor_samples)
         donor_samples = cur.fetchall()
+        for i in donor_samples:
+            print(i)
 
-        for blood_type, blood_amount, use_by_date, abnormalities, added_to_bank in donor_samples:
-            expired = is_expired(use_by_date, today)
+        for sample in donor_samples:
+            sid = sample[0]
+            b_type = sample[2]
+            use_by = sample[4]
+            abn = sample[5]
+            b_amount = sample[6]
+            added = sample[7]
 
-            if not expired and not abnormalities:
-                if not added_to_bank:
-                    self.add_blood(blood_type, blood_amount)
+            expired = is_expired(use_by, today)
+
+            if not expired and not abn:
+                if not added:
+                    self.add_blood(b_type, b_amount)
+                    print("Adding " + b_type, "Amount: " + str(b_amount))
+                    sql_has_added = """update donor_samples set added_to_bank = ? where sample_id = ?"""
+                    cur.execute(sql_has_added, (1, sid))
+                    conn.commit()
             else:
-                if added_to_bank:
-                    self.discard_blood(blood_type, blood_amount)
+                if added:
+                    self.discard_blood(b_type, b_amount)
 
         self.refresh_blood_amounts()
         self.disconnect_db(conn)
