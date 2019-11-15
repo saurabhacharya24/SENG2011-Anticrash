@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-
+from bloodbank_class import *
 
 app = Flask(__name__)
 
@@ -10,6 +10,12 @@ def home():
 @app.route("/donor")
 def donor():
     return render_template("donor.html")
+
+@app.route("/admin")
+def admin():
+    bank = Blood_bank()
+    blood_amounts = bank.get_all_blood_amounts()
+    return render_template("admin.html", amounts=blood_amounts)
 
 if __name__ == "__main__":
     app.run(debug=True)

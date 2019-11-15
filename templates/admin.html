@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <title> Admin </title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static',filename='styles/index.css') }}" type="text/css">
+    </head>
+    <body>
+        <p class="blood-amounts-title"> Current Blood Levels </p>
+        <table class="blood-amounts-table">
+            <tr>
+                <th class="b-type-title"> Type </td>
+                <th class="b-amount-title"> Amount (ml) </td>
+                <th class="b-type-status"> Status </th>
+            </tr>
+            {% for b_type, b_amount in amounts.items() %}
+            <tr>
+                <td class="b-type"> {{ b_type }} </td>
+                <td class="b-amount"> {{ b_amount}} </td>
+                <td class="b-status"> NA </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <script src="" async defer></script>
+    </body>
+</html>
