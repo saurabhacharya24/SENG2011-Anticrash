@@ -67,16 +67,18 @@ class Donations:
             if i == 1000:
                 break
 
-    # Method to generate list of donors with abnormalities, not tested
+  # Method to generate list of donors with abnormalities, not tested
     def abnormal_donors(self):
         conn = self.connect_to_db()
         cur = conn.cursor()
-        cur.execute("SELECT donor_id FROM donor_samples WHERE abnormalities=True;")
+        cur.execute("SELECT donor_id FROM donor_samples WHERE abnormalities=1;")
         id_list = list(cur.fetchall())
-        #for single_id in id_list:
-        #    query2 = ""
-        cur.execute("Select name from donor_table where donor_id=[id_list]") #is there a donor_id in donor_table??
-        print(cur.fetchall())
+        for single_id in id_list:
+            print(single_id)
+            query = "Select name from donors where donor_id=?"
+            cur.execute(query, single_id) #is there a donor_id in donor_table??
+            print(cur.fetchone())
+
     # Helper method to connect to db
     def connect_to_db(self):
         conn = sqlite3.connect("database/anticrash.db")
