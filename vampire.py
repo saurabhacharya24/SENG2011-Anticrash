@@ -15,7 +15,12 @@ def donor():
 def admin():
     bank = Blood_bank()
     blood_amounts = bank.get_all_blood_amounts()
-    return render_template("admin.html", amounts=blood_amounts)
+    threshold = {}
+    
+    for btype in blood_amounts.keys():
+        threshold[btype] = bank.get_threshold_level(btype)
+
+    return render_template("admin.html", amounts=blood_amounts, threshold=threshold)
 
 if __name__ == "__main__":
     app.run(debug=True)

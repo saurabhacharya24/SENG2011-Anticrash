@@ -11,16 +11,29 @@ body {
 .blood-amounts-table {
     margin: 0 auto;
     font-size: 16pt;
+
+    .b-status-ok {
+        padding-left: 5px;
+        padding-right: 5px;
+        color: green;
+    }
+
+    .b-status-critical {
+        padding-left: 5px;
+        padding-right: 5px;
+        color: red;
+    }
 }
 
-.blood-amounts-table tr:nth-child(even){background-color: white;}
+.blood-amounts-table tr:nth-child(odd){background-color: white;}
 
 .blood-amounts-table th {
     padding-left: 10px;
     padding-right: 10px;
     padding-top: 12px;
     padding-bottom: 12px;
-    text-align: left;
+    width: 140px;
+    text-align: center;
     background-color: #4CAF50;
     color: white;
 }

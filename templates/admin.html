@@ -18,7 +18,11 @@
             <tr>
                 <td class="b-type"> {{ b_type }} </td>
                 <td class="b-amount"> {{ b_amount}} </td>
-                <td class="b-status"> NA </td>
+                {% if b_amount < threshold[b_type] %}
+                    <td class="b-status-critical"> Critical </td>
+                {% else %}
+                    <td class="b-status-ok"> Normal </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>
