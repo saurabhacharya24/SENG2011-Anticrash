@@ -20,6 +20,9 @@ class Donations:
         if valid_donor and valid_blood_amt:
             #test blood for abnormalities
             self.test_blood()
+            #change date format
+            day, month, year = self.use_by_date.day, self.use_by_date.month, self.use_by_date.year
+            self.use_by_date = str(day) + "/" + str(month) + "/" + str(year)
             sql_insert_sample = """insert into donor_samples(donor_id, blood_type, location_of_donation, use_by_date, abnormalities, blood_amount, added_to_bank) values (?, ?, ?, ?, ?, ?, ?)"""
             print(self.donor_id, self.blood_type, self.location_of_donation, self.use_by_date, self.abnormalities, self.blood_amount, self.added_to_bank)       
             conn = self.connect_to_db()
@@ -90,7 +93,5 @@ class Donations:
         conn.close()
 
 
-test = Donations(1, "A", "15 Alice St", 500)
-# a = test.validate_donor_ID(150)
-# print(a)
-a = test.accept_donation()
+# test = Donations(1, "A", "15 Alice St", 500)
+# a = test.accept_donation()
