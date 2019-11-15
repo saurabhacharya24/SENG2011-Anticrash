@@ -1,0 +1,59 @@
+%home-buttons {
+    padding: 20px;
+    height: 70px;
+    width: 210px;
+    font-size: 16pt;
+    border-radius: 2px;
+    border: none;
+    background-color: rgb(64, 64, 235);
+    color: white;
+    transition: background-color 0.1s, color 0.1s;
+}
+
+%home-buttons-hover {
+    cursor: pointer;
+    border: 1px solid rgb(64, 64, 235);
+    background-color: white;
+    color: rgb(64, 64, 235);
+    transition: background-color 0.1s, color 0.1s;
+}
+
+body {
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgb(241, 241, 241);
+}
+
+.homepage-title {
+    margin-top: 25px;
+    font-size: 28pt;
+}
+
+.main-buttons {
+    margin-top: 10%;
+
+    .donor-button {
+        @extend %home-buttons;
+
+        &:hover {
+            @extend %home-buttons-hover;
+        }
+    }
+
+    .admin-button {
+        @extend %home-buttons;
+        
+        &:hover {
+            @extend %home-buttons-hover;
+        }
+    }
+
+    .med-facility-button {
+        margin-top: 1%;
+        @extend %home-buttons;
+
+        &:hover {
+            @extend %home-buttons-hover;
+        }
+    }
+}

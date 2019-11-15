@@ -1,0 +1,39 @@
+.main-buttons .med-facility-button, .main-buttons .admin-button, .main-buttons .donor-button {
+  padding: 20px;
+  height: 70px;
+  width: 210px;
+  font-size: 16pt;
+  border-radius: 2px;
+  border: none;
+  background-color: #4040eb;
+  color: white;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.main-buttons .med-facility-button:hover, .main-buttons .admin-button:hover, .main-buttons .donor-button:hover {
+  cursor: pointer;
+  border: 1px solid #4040eb;
+  background-color: white;
+  color: #4040eb;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+body {
+  text-align: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f1f1f1;
+}
+
+.homepage-title {
+  margin-top: 25px;
+  font-size: 28pt;
+}
+
+.main-buttons {
+  margin-top: 10%;
+}
+.main-buttons .med-facility-button {
+  margin-top: 1%;
+}
+
+/*# sourceMappingURL=index.css.map */
