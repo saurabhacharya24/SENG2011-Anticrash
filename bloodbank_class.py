@@ -51,11 +51,11 @@ class Blood_bank:
 
     def check_quantities_bool(self):
         self.check_freshness()
-        retval = True
+        retval = False
 
         for b_type in self.blood_amounts:
             if self.blood_amounts[b_type] < self.threshold[b_type]:
-                retval = False
+                retval = True
                 self.critical = retval
                 return retval
 
