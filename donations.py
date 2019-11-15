@@ -62,7 +62,7 @@ class Donations:
         rows = list(cur.fetchall())
         i=0
         for row in rows:
-            print(row)
+            return row
             i+=1
             if i == 1000:
                 break
@@ -77,7 +77,7 @@ class Donations:
             print(single_id)
             query = "Select name from donors where donor_id=?"
             cur.execute(query, single_id) 
-            print(cur.fetchone())
+            return cur.fetchone()
 
     # Helper method to connect to db
     def connect_to_db(self):
