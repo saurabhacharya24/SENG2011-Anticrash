@@ -53,7 +53,7 @@ class Donations:
         else:
             self.abnormalities = False
 
-    # Method to generate samples based on blood_type, not tested
+    # Method to generate samples based on blood_type
     def generate_sample(self,blood_t):
         conn = self.connect_to_db()
         cur = conn.cursor()
@@ -67,7 +67,7 @@ class Donations:
             if i == 1000:
                 break
 
-  # Method to generate list of donors with abnormalities, not tested
+  # Method to generate list of donors with abnormalities
     def abnormal_donors(self):
         conn = self.connect_to_db()
         cur = conn.cursor()
@@ -76,7 +76,7 @@ class Donations:
         for single_id in id_list:
             print(single_id)
             query = "Select name from donors where donor_id=?"
-            cur.execute(query, single_id) #is there a donor_id in donor_table??
+            cur.execute(query, single_id) 
             print(cur.fetchone())
 
     # Helper method to connect to db
