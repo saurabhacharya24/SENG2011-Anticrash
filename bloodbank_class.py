@@ -104,8 +104,8 @@ class Blood_bank:
         for b_type, b_amount in blood_type_and_amount:
             self.blood_amounts[b_type] = b_amount
 
-        self.check_quantities_bool()
-        self.check_quantities()
+        # self.check_quantities_bool()
+        # self.check_quantities()
 
         self.disconnect_db(conn)
 
