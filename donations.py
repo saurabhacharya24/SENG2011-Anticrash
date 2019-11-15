@@ -77,7 +77,8 @@ class Donations:
             print(single_id)
             query = "Select name from donors where donor_id=?"
             cur.execute(query, single_id) 
-            return cur.fetchone()
+            abnormal_donors.append(cur.fetchone())
+        return abnormal_donors
 
     # Helper method to connect to db
     def connect_to_db(self):
