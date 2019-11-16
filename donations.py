@@ -64,11 +64,14 @@ class Donations:
         cur.execute(query, blood_t)
         rows = list(cur.fetchall())
         i=0
-        for row in rows:
-            return row
-            i+=1
-            if i == 1000:
-                break
+        if not rows:
+            print ("No samples")
+        else:
+            for row in rows:
+                 return row
+                 i+=1
+                 if i == 1000:
+                     break
 
   # Method to generate list of donors with abnormalities
     def abnormal_donors(self):
@@ -76,11 +79,14 @@ class Donations:
         cur = conn.cursor()
         cur.execute("SELECT donor_id FROM donor_samples WHERE abnormalities=1;")
         id_list = list(cur.fetchall())
-        for single_id in id_list:
-            print(single_id)
-            query = "Select name from donors where donor_id=?"
-            cur.execute(query, single_id) 
-            abnormal_donors.append(cur.fetchone())
+        if not id_list:
+            print ("No donors with abnormalities")
+        else:
+            for single_id in id_list:
+                print(single_id)
+                query = "Select name from donors where donor_id=?"
+                cur.execute(query, single_id) 
+                abnormal_donors.append(cur.fetchone())
         return abnormal_donors
 
     # Helper method to connect to db
