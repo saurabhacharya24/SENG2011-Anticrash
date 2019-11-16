@@ -11,6 +11,11 @@ def home():
 def donor():
     return render_template("donor.html")
 
+
+@app.route("/med_facility")
+def med_facility():
+    return render_template("med_facility.html")
+
 @app.route("/admin")
 def admin():
     bank = Blood_bank()
