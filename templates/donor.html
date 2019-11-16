@@ -8,7 +8,18 @@
         <link rel="stylesheet" href="{{ url_for('static',filename='styles/index.css') }}" type="text/css">
     </head>
     <body>
-        <p> Donor Stuff </p>
+        <p> Donation Entry </p>
         <!-- <script src="" async defer></script> -->
+        <p style ="text-style:justify">Donor ID:
+        <input type = "text" id = "donor_id" style = "float:middle"></p>
+        <p style ="text-style:justify">Blood Type:
+        <input type = "text" id = "blood_type" style = "float:middle"></p>
+        <p style ="text-style:justify">Quantity of blood donated:
+        <input type = "text" id = "blood_amount" style = "float:middle"></p>
+        <p style ="text-style:justify">Location of blood donation:
+        <input type = "text" id = "location_of_donation" style = "float:middle"></p>
+        <p style ="text-style:justify">Date of donation:
+        <input type = "text" id = "donation_date" style = "float:middle"></p>
+        <input type = "submit" value = "Enter donation" style = "float:middle">
     </body>
 </html>
