@@ -12,8 +12,12 @@ def donor():
     return render_template("donor.html")
 
 
-@app.route("/med_facility")
-def med_facility():
+@app.route("/medfacility",methods=['GET', 'POST'])
+def medfacility():
+    if request.method == 'POST':        
+        print(request.form)
+        
+        return redirect(url_for('home'))
     return render_template("med_facility.html")
 
 @app.route("/admin")

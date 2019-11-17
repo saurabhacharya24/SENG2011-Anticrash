@@ -10,8 +10,35 @@
 </head>
 
 <body>
-    <p> Medical Facility stuff </p>
+    <p> Medical Facility - Make request </p>
     <!-- <script src="" async defer></script> -->
+    <form method=post action="{{ url_for('medfacility') }}">
+    
+        <p style ="text-style:justify">Medical Facility ID
+        <input type = "text" name="facility_id" style = "float:middle" ></p>
+        <p style ="text-style:justify">Blood Type:
+        <select name="blood_type">
+        <option value="apos">A+</option>   
+        <option value="aneg">A-</option> 
+        <option value="bpos">B+</option> 
+        <option value="bneg">B-</option> 
+        <option value="opos">O+</option> 
+        <option value="oneg">O-</option> 
+        <option value="abpos">AB+</option> 
+        <option value="abneg">AB-</option>      
+        </select>        
+        </p>      
+
+        <p style ="text-style:justify">Blood Amount:
+        <input type = "text" name="blood_amount" style = "float:middle"></p>
+        <p style ="text-style:justify">Request Type:
+        <select name="request_type">
+        <option value="emergency">Emergency</option>   
+        <option value="nonemergency">Non Emergency</option> 
+        </select>
+    	</p>
+        <input type = "submit" value = "Make Request" name="submit" style = "float:middle">
+    </form>
 </body>
 
 </html>
