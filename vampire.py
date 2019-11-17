@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from bloodbank_class import *
 from make_requests import Make_requests
+from donations import *
 
 app = Flask(__name__)
 
@@ -12,6 +13,17 @@ def home():
 def donor():
     return render_template("donor.html")
 
+@app.route("/donor", methods=["POST"])
+def donor_post():
+    if request.method == 'POST':
+        donor_id = request.form['donor_id']
+        blood_type = request.form['blood_type']
+        blood_amount = request.form['blood_amount']
+        location_of_donation = request.form['location_of_donation']
+        donation_date = request.form['donation_date']
+        donation = Donations(donor_id, blood_type, location_of_donation, blood_amount)
+        donation.accept_donation()
+    return render_template("donor.html")
 
 @app.route("/medfacility",methods=['GET', 'POST'])
 def medfacility():

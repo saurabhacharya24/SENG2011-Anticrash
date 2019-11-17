@@ -44,7 +44,7 @@ class Donations:
             return False
 
     def validate_blood_amt(self, blood_amount):
-        if 450 <= blood_amount <= 550:
+        if 450 <= int(blood_amount) <= 550:
             return True
         else:
             return False
@@ -88,6 +88,12 @@ class Donations:
                 cur.execute(query, single_id) 
                 abnormal_donors.append(cur.fetchone())
         return abnormal_donors
+
+    # Method to generate list of donation sample details
+    def list_donation_samples(self):
+        conn = self.connect_to_db()
+        cur = conn.cursor()
+
 
     # Helper method to connect to db
     def connect_to_db(self):
