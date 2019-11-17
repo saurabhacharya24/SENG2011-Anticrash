@@ -9,20 +9,24 @@ app = Flask(__name__)
 def home():
     return render_template("homepage.html")
 
-@app.route("/donor")
-def donor():
-    return render_template("donor.html")
+# @app.route("/donor")
+# def donor():
+#     return render_template("donor.html")
 
-@app.route("/donor", methods=["POST"])
+@app.route("/donor", methods=["GET", "POST"])
 def donor_post():
     if request.method == 'POST':
-        donor_id = request.form['donor_id']
-        blood_type = request.form['blood_type']
-        blood_amount = request.form['blood_amount']
-        location_of_donation = request.form['location_of_donation']
-        donation_date = request.form['donation_date']
-        donation = Donations(donor_id, blood_type, location_of_donation, blood_amount)
-        donation.accept_donation()
+        try:
+            donor_id = request.form['donor_id']
+            blood_type = request.form['blood_type']
+            blood_amount = request.form['blood_amount']
+            location_of_donation = request.form['location_of_donation']
+            donation_date = request.form['donation_date']
+            donation = Donations(donor_id, blood_type, location_of_donation, blood_amount)
+            donation.accept_donation()
+            return redirect(url_for('home'))
+        except:
+            return redirect(url_for('Error'))
     return render_template("donor.html")
 
 @app.route("/medfacility",methods=['GET', 'POST'])
