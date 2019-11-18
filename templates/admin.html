@@ -25,6 +25,20 @@
                 {% endif %}
             </tr>
             {% endfor %}
+            <br>
+        </table>
+        <p class="blood-amounts-title"> Donors with abnormalities </p>
+        <table class="blood-amounts-table">
+            <tr>
+                <th class="abn-name"> Name </th>
+                <th class="abn-contact"> Contact Info </th>
+            </tr>
+            {% for i in abn_donors %}
+            <tr>
+                <td> {{ i[0][:1] }}. {{ i[0].split()[1] }} </td>
+                <td> {{ i[1] }} </td>
+            </tr>
+            {% endfor %}
         </table>
         <script src="" async defer></script>
     </body>

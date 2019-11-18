@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from bloodbank_class import *
 from make_requests import Make_requests
 from donations import *
+from helper_methods import *
 
 app = Flask(__name__)
 
@@ -48,13 +49,23 @@ def medfacility():
 @app.route("/admin")
 def admin():
     bank = Blood_bank()
+    
+    conn = bank.connect_to_db()
+    cur = conn.cursor()
+    sql_abn_donors = """select d.name, d.contact_info 
+                        from donors d, donor_samples s
+                        where d.donor_id = s.donor_id
+                        and s.abnormalities = 1"""
+    abn_donors = cur.execute(sql_abn_donors)
+
+    abn_donors_list = cur.fetchall()
     blood_amounts = bank.get_all_blood_amounts()
     threshold = {}
     
     for btype in blood_amounts.keys():
         threshold[btype] = bank.get_threshold_level(btype)
 
-    return render_template("admin.html", amounts=blood_amounts, threshold=threshold)
+    return render_template("admin.html", amounts=blood_amounts, threshold=threshold, abn_donors=abn_donors_list)
 
 @app.route("/gen_info")
 def gen_info():
