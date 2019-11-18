@@ -56,6 +56,10 @@ def admin():
 
     return render_template("admin.html", amounts=blood_amounts, threshold=threshold)
 
+@app.route("/gen_info")
+def gen_info():
+    return render_template("gen_info.html")
+
 @app.route("/error")
 def error():
     return render_template("error.html")

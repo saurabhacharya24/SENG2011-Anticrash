@@ -75,4 +75,33 @@ body {
   color: white;
 }
 
+.main-buttons .gen-info-button {
+  padding: 20px;
+  height: 70px;
+  width: 210px;
+  font-size: 16pt;
+  border-radius: 2px;
+  border: none;
+  background-color: #4040eb;
+  color: white;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.main-buttons .gen-info-button:hover {
+  cursor: pointer;
+  border: 1px solid #4040eb;
+  background-color: white;
+  color: #4040eb;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.gen-info-main-title {
+  margin-bottom: 80px;
+}
+
+.gen-info-points {
+  width: 64%;
+  margin-left: 18%;
+}
+
 /*# sourceMappingURL=index.css.map */
