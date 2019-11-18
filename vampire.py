@@ -26,7 +26,7 @@ def donor_post():
             donation.accept_donation()
             return redirect(url_for('home'))
         except:
-            return redirect(url_for('Error'))
+            return redirect(url_for('error'))
     return render_template("donor.html")
 
 @app.route("/medfacility",methods=['GET', 'POST'])
@@ -55,6 +55,10 @@ def admin():
         threshold[btype] = bank.get_threshold_level(btype)
 
     return render_template("admin.html", amounts=blood_amounts, threshold=threshold)
+
+@app.route("/error")
+def error():
+    return render_template("error.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
