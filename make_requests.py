@@ -43,6 +43,8 @@ class Make_requests(bloodbank_class.Blood_bank):
                 self.critical = True
                 self.issuecriticalwarning()
 
+        self.check_freshness()
+
     def process_emergency_request(self):
         blood_left = self.blood_amounts[self.blood_type] - self.amount
 
@@ -56,6 +58,8 @@ class Make_requests(bloodbank_class.Blood_bank):
         else:
             self.can_complete = False
             self.issuewarning()
+
+        self.check_freshness()
 
     def decrease_inventory(self, blood_type, blood_amount):
         self.discard_blood(blood_type, blood_amount)
