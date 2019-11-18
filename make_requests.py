@@ -63,7 +63,7 @@ class Make_requests(bloodbank_class.Blood_bank):
 
     def decrease_inventory(self, blood_type, blood_amount):
         self.discard_blood(blood_type, blood_amount)
-        self.disconnect_db(conn)
+        # self.disconnect_db(conn)
 
     # These are the functions which have to be used with a frontend, to manipulate buttons and issue warnings
     # This function is a front end button which shifts things from pending requests to completed request

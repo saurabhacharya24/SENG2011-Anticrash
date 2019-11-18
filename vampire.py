@@ -33,18 +33,19 @@ def donor_post():
 @app.route("/medfacility",methods=['GET', 'POST'])
 def medfacility():
     if request.method == 'POST':        
-        print(request.form)
+        # print(request.form)
         bank = Blood_bank()
+        mf_id = str(request.form['facility_id'])
+
         if request.form['request_type'] == 'Emergency':
             emergency= True
+            blood_req = Make_requests(medical_facility_id=mf_id, amount=int(request.form['blood_amount']), blood_type=request.form['blood_type'], emergency=emergency, bloodbank_class=bank)
+            blood_req.process_emergency_request()
         else:
             emergency= False
-            mf_id = str(request.form['facility_id'])
-            blood_req = Make_requests( medical_facility_id=mf_id,amount=int(request.form['blood_amount']),blood_type=request.form['blood_type'],emergency=emergency,bloodbank_class=bank)
+            blood_req = Make_requests(medical_facility_id=mf_id, amount=int(request.form['blood_amount']), blood_type=request.form['blood_type'], emergency=emergency, bloodbank_class=bank)
             blood_req.process_normal_request()
-        # mf_id = str(request.form['facility_id'])
-        # blood_req = Make_requests( medical_facility_id=mf_id,amount=int(request.form['blood_amount']),blood_type=request.form['blood_type'],emergency=emergency,bloodbank_class=bank)
-        # blood_req.process_normal_request()
+
         print("check sql db now")
         return redirect(url_for('home'))
     return render_template("med_facility.html")
