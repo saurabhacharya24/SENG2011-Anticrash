@@ -1,14 +1,15 @@
 import sqlite3
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 import random
 
 class Donations:
 
-    def __init__(self, donor_id:int, blood_type:str, location_of_donation:str, blood_amount:int):
+    def __init__(self, donor_id:int, blood_type:str, location_of_donation:str, blood_amount:int, date_of_donation):
         self.donor_id = donor_id
         self.blood_type = blood_type
         self.location_of_donation = location_of_donation
-        self.use_by_date = date.today() + timedelta(days=42) #unsure about date.today()
+        self.date_of_donation = datetime.strptime(date_of_donation, "%Y-%m-%d")
+        self.use_by_date = self.date_of_donation + timedelta(days=42) #unsure about date.today()
         self.abnormalities = False
         self.blood_amount = blood_amount
         self.added_to_bank = False
@@ -24,7 +25,7 @@ class Donations:
             day, month, year = self.use_by_date.day, self.use_by_date.month, self.use_by_date.year
             self.use_by_date = str(day) + "/" + str(month) + "/" + str(year)
             sql_insert_sample = """insert into donor_samples(donor_id, blood_type, location_of_donation, use_by_date, abnormalities, blood_amount, added_to_bank) values (?, ?, ?, ?, ?, ?, ?)"""
-            print(self.donor_id, self.blood_type, self.location_of_donation, self.use_by_date, self.abnormalities, self.blood_amount, self.added_to_bank)       
+            print(self.donor_id, self.blood_type, self.location_of_donation, self.use_by_date, self.abnormalities, self.blood_amount, self.added_to_bank, self.use_by_date)       
             conn = self.connect_to_db()
             cur = conn.cursor()
             cur.execute(sql_insert_sample, (self.donor_id, self.blood_type, self.location_of_donation, self.use_by_date, self.abnormalities, self.blood_amount, self.added_to_bank))
@@ -105,5 +106,5 @@ class Donations:
         conn.close()
 
 
-# test = Donations(1, "A", "15 Alice St", 500)
+# test = Donations(1, "A+", "15 Alice St", 500)
 # a = test.accept_donation()

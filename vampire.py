@@ -16,17 +16,17 @@ def home():
 @app.route("/donor", methods=["GET", "POST"])
 def donor_post():
     if request.method == 'POST':
-        try:
+        # try:
             donor_id = request.form['donor_id']
             blood_type = request.form['blood_type']
             blood_amount = request.form['blood_amount']
             location_of_donation = request.form['location_of_donation']
             donation_date = request.form['donation_date']
-            donation = Donations(donor_id, blood_type, location_of_donation, blood_amount)
+            donation = Donations(donor_id, blood_type, location_of_donation, blood_amount, donation_date)
             donation.accept_donation()
             return redirect(url_for('home'))
-        except:
-            return redirect(url_for('error'))
+        # except:
+        #     return redirect(url_for('error'))
     return render_template("donor.html")
 
 @app.route("/medfacility",methods=['GET', 'POST'])
@@ -56,9 +56,9 @@ def admin():
 
     return render_template("admin.html", amounts=blood_amounts, threshold=threshold)
 
-@app.route("/error")
-def error():
-    return render_template("error.html")
+# @app.route("/error")
+# def error():
+#     return render_template("error.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
