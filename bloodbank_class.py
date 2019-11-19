@@ -60,7 +60,7 @@ class Blood_bank:
         for b_type in self.critical_dict:
             if self.blood_amounts[b_type] < self.threshold[b_type]:
                 self.critical_dict[b_type] = True
-            else
+            else:
                 self.critical_dict[b_type] = False
 
 
@@ -84,7 +84,7 @@ class Blood_bank:
         # self.check_freshness()
 
     def contains_type(b_type):
-        if b_type in self.threshold && b_type in self.blood_amounts && b_type in self.critical_dict:
+        if b_type in self.threshold and b_type in self.blood_amounts and b_type in self.critical_dict:
             return True
         else:
             return False
