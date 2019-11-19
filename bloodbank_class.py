@@ -17,9 +17,19 @@ class Blood_bank:
             "AB-": 100000
         }
 
+        self.critical_dict = {
+            "O+": False,
+            "O-": False,
+            "A+": False,
+            "A-": False,
+            "B+": False,
+            "B-": False,
+            "AB+": False,
+            "AB-": False
+        }
+
         self.blood_amounts = {}
         self.check_freshness()
-        self.critical = False
 
     def get_all_blood_amounts(self):
         # self.check_freshness()
@@ -35,34 +45,28 @@ class Blood_bank:
     def is_critical(self):
         return self.critical
 
-    def check_quantities(self):
-        self.check_freshness()
-
-        critical_levels = []
-
-        for b_type in self.blood_amounts:
-            if self.blood_amounts[b_type] < self.threshold[b_type]:
-                critical_levels.append(b_type)
-
-        return critical_levels
         # Should probably call donation class (ie. get_donations or something)
         # and after getting donations, update_blood_amounts
         # based on type (which is in critical_levels)
 
-    def check_quantities_bool(self):
+    def isCritical(self, b_type):
         self.check_freshness()
-        retval = False
 
-        for b_type in self.blood_amounts:
+        return self.critical_dict[b_type]
+
+    def check_critical(self):
+        self.check_freshness()
+
+        for b_type in self.critical_dict:
             if self.blood_amounts[b_type] < self.threshold[b_type]:
-                retval = True
-                self.critical = retval
-                return retval
+                self.critical_dict[b_type] = True
+            else
+                self.critical_dict[b_type] = False
 
-        return retval
+
 
     def add_blood(self, b_type, quantity):
-        self.refresh_blood_amounts()
+        self.check_freshness()
 
         updated_blood = self.blood_amounts[b_type] + quantity
 
@@ -73,12 +77,20 @@ class Blood_bank:
         cur.execute(sql_adjust_level, (updated_blood, b_type))
         conn.commit()
 
+
+        self.check_critical()
         self.disconnect_db(conn)
 
         # self.check_freshness()
 
+    def contains_type(b_type):
+        if b_type in self.threshold && b_type in self.blood_amounts && b_type in self.critical_dict:
+            return True
+        else:
+            return False
+
     def discard_blood(self, b_type, quantity):
-        self.refresh_blood_amounts()
+        self.check_freshness()
 
         updated_blood = self.blood_amounts[b_type] - quantity
 
@@ -89,6 +101,7 @@ class Blood_bank:
         cur.execute(sql_adjust_level, (updated_blood, b_type))
         conn.commit()
 
+        self.check_critical()
         self.disconnect_db(conn)
 
         # self.check_freshness()

@@ -1,25 +1,32 @@
 class BloodBank {
     var blood:map<string, int>
     var threshold:map<string, int>;
-    var critical:bool
+    var critical:map<string, bool>;
 
     predicate Valid()
     reads this
     { 
         forall i :: i in blood ==> blood[i] >= 0
         &&
-        forall i :: i in blood && i in threshold && critical == true ==> blood[i] < threshold[i]
-        &&
-        forall i :: i in blood && i in threshold && critical == false ==> blood[i] >= threshold[i]
+        forall i :: containsType(i) ==> if blood[i] < threshold[i] then critical[i] == true else critical[i] == false
+     }
 
-
+    predicate containsType(btype:string)
+    reads this
+    {
+        btype in blood && btype in threshold && btype in critical
     }
+
+    // predicate onlyModifies(btype:string)
+    // reads this
+    // {
+    //     forall i :: containsType(i)
+    // }
 
     constructor ()
     // modifies this;
     ensures Valid()
     {
-        critical := true;
         blood := map["A+" := 0,  "A-":=0,
                      "B+" := 0,  "B-":=0,
                      "O+" := 0,  "O-":=0,
@@ -30,53 +37,96 @@ class BloodBank {
                      "O+" := 400000,  "O-":=200000,
                      "AB+" := 100000, "AB-":=100000
                     ];
+        critical := map["A+" := true,  "A-":=true,
+                     "B+" := true,  "B-":=true,
+                     "O+" := true,  "O-":=true,
+                     "AB+" := true, "AB-":=true
+                    ];
     }
 
     method addBlood(key:string, quantity:int)
     modifies this;
     requires Valid()
-    requires key in blood && key in threshold
+    requires containsType(key)
     requires quantity > 0
     ensures Valid()
     ensures key in blood ==> blood[key] == old(blood[key]) + quantity
-    ensures key in blood && key in threshold && blood[key] >= threshold[key] ==> critical == false
+    ensures containsType(key) && blood[key] >= threshold[key] ==> critical[key] == false
+    ensures containsType(key) && blood[key] < threshold[key] ==> critical[key] == true
     {
-        if key in blood && key in threshold{
-            var amount:int := blood[key];
-            var newAmount:int := amount + quantity;
-            blood := blood[key := newAmount];
+        var amount:int := blood[key];
+        var newAmount:int := amount + quantity;
+        blood := blood[key := newAmount];
 
-            if newAmount >= threshold[key]{
-                critical := false;
-            }
+        if newAmount >= threshold[key]{
+            critical := critical[key := false];
+        } else {
+            critical := critical[key := true];
         }
     }
+
+
+
+    method discardBlood(key:string, quantity:int)
+    modifies this
+    requires Valid()
+    requires containsType(key)
+    requires quantity > 0 && blood[key] - quantity > 0
+    ensures Valid()
+    ensures containsType(key) && blood[key] > 0
+    ensures key in blood ==> blood[key] == old(blood[key]) - quantity
+    ensures forall i :: containsType(i) && old(containsType(i)) && i != key ==> blood[i] == old(blood[i])
+                                                                         && critical[i] == old(critical[i])
+                                                                         && threshold[i] == old(threshold[i])
+    {
+        var amount:int := blood[key];
+        var newAmount:int := amount - quantity;
+        blood := blood[key := newAmount];
+
+        if blood[key] >= threshold[key]{
+            critical := critical[key := false];
+        } else {
+            critical := critical[key := true];
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    // method discardBlood(btype:string, quantity:int):
+    // modifies this;
+    // requires Valid()
+
+
 
     // method discardBlood(key:string, quantity:int)
     // modifies this;
     // requires Valid()
     // ensures Valid()
-    // requires key in blood && key in threshold
-    // requires quantity > 0
-    // ensures key in blood ==> blood[key] >= 0
-    // ensures key in blood && (old(blood[key]) - quantity) > 0 ==> (blood[key] == old(blood[key]) - quantity)
-    // ensures key in blood && blood[key] == old(blood[key]) ==> critical == old(critical)
-    // ensures key in blood && key in threshold && (old(blood[key]) - quantity) < threshold[key] ==> critical == true
-    // ensures key in blood && key in threshold && blood[key] < threshold[key] ==> critical == true
-    // ensures key in blood && key in threshold && blood[key] >= threshold[key] ==> critical == false
-    // {
-    //     if key in blood && key in threshold{
-    //         var amount:int := blood[key];
-    //         var newAmount:int := amount - quantity;
-    //         if (newAmount > 0) {
-    //             blood := blood[key := newAmount];
-    //         }
+    // requires containsType(key)
+    // ensures key in blood ==> blood[key] == old(blood[key]) - quantity
+    // ensures containsType(key) && blood[key] >= threshold[key] ==> critical[key] == false
+    // ensures containsType(key) && blood[key] < threshold[key] ==> critical[key] == true
+    // requires quantity > 0 && quantity < blood[key]
 
-    //         if blood[key] < threshold[key] {
-    //             critical := true;
-    //         }
-            
+    // {
+    //     var amount:int := blood[key];
+    //     var newAmount:int := amount - quantity;
+    //     blood := blood[key := newAmount];
+
+    //     if blood[key] >= threshold[key] {
+    //         critical := critical[key := false];
+    //     } else {
+    //         critical := critical[key := true];
     //     }
+        
+        
     // }
 
 
