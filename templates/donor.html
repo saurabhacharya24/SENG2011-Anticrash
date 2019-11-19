@@ -8,13 +8,13 @@
         <link rel="stylesheet" href="{{ url_for('static',filename='styles/index.css') }}" type="text/css">
     </head>
     <body>
-        <form method = "POST">
-            <p> Donation Entry </p>
+        <p class="page-title"> Donation Entry </p>
+        <form method = "POST" class="form">
             <!-- <script src="" async defer></script> -->
-            <p style ="text-style:justify">Donor ID:
-            <input type = "text" name = "donor_id" pattern = "[1-9][0-9]*" title = "id should be a number" style = "float:middle" required></p>
-            <p style ="text-style:justify">Blood Type:
-            <select name = "blood_type">
+            <p class="form-input-text">Donor ID:
+            <input class="form-input" type = "text" name = "donor_id" pattern = "[1-9][0-9]*" title = "id should be a number" style = "float:middle" required></p>
+            <p class="form-input-text">Blood Type:
+            <select name = "blood_type" class="form-input">
             <option value="A+">A+</option>   
             <option value="A-">A-</option> 
             <option value="B+">B+</option> 
@@ -25,13 +25,34 @@
             <option value="AB-">AB-</option>      
             </select>        
             </p>
-            <p style ="text-style:justify">Quantity of blood donated:
-            <input type = "text" name = "blood_amount" pattern = "[1-9][0-9]*" title = "Enter amount in numerals" style = "float:middle" required></p>
-            <p style ="text-style:justify">Location of blood donation:
-            <input type = "text" name = "location_of_donation" style = "float:middle" required></p>
-            <p style ="text-style:justify">Date of donation:
-            <input type = "date" name = "donation_date" style = "float:middle" required></p>
-            <input type = "submit" value = "Enter donation" style = "float:middle">
+            <p class="form-input-text">Quantity of blood donated:
+            <input class="form-input" type = "text" name = "blood_amount" pattern = "[1-9][0-9]*" title = "Enter amount in numerals" style = "float:middle" required></p>
+            <p class="form-input-text">Location of blood donation:
+            <select class="form-input" name = "location_of_donation" required>
+                <option value="468 Scelerisque Rd"> 468 Scelerisque Rd </option>
+                <option value="3150 Tortor Rd"> 3150 Tortor Rd </option> 
+                <option value="551-359 Scelerisque St"> 551-359 Scelerisque St </option>
+                <option value="480-3907 Lacinia Road"> 480-3907 Lacinia Road </option>
+                <option value="980-6373 Eleifend Av"> 980-6373 Eleifend Av </option>
+                <option value="3164 Elementum St"> 3164 Elementum St </option>
+                <option value="114-3295 Natoque St"> 114-3295 Natoque St </option>
+                <option value="894-6475 Duis Street"> 894-6475 Duis Street </option>
+                <option value="7506 Elit, Rd"> 7506 Elit, Rd </option>
+                <option value="606-4667 Lectus Av"> 606-4667 Lectus Av </option>
+                <option value="5639 Sociis Ave"> 5639 Sociis Ave </option>
+                <option value="2947 Mauris Street"> 2947 Mauris Street </option>
+                <option value="8138 Nulla Av"> 8138 Nulla Av </option>
+                <option value="835-8098 Pretium St"> 835-8098 Pretium St </option>
+                <option value="9913 Vestibulum Avenue"> 9913 Vestibulum Avenue </option>
+                <option value="912-1903 Aliquam Road"> 912-1903 Aliquam Road </option>
+                <option value="6562 Elementum Avenue"> 6562 Elementum Avenue </option>
+                <option value="3449 Aliquam Rd"> 3449 Aliquam Rd </option>
+                <option value="838-3649 At Ave"> 838-3649 At Ave </option>
+                <option value="491 Turpis Rd"> 491 Turpis Rd </option>
+            </select>
+            <p class="form-input-text">Date of donation:
+            <input class="form-input" type = "date" name = "donation_date" style = "float:middle" required></p>
+            <input class="submit-button" type = "submit" value = "Enter donation" style = "float:middle">
         </form>
     </body>
 </html>

@@ -10,14 +10,14 @@
 </head>
 
 <body>
-    <p> Medical Facility - Make request </p>
+    <p class="page-title"> Medical Facility - Make request </p>
     <!-- <script src="" async defer></script> -->
-    <form method=post action="{{ url_for('medfacility') }}">
+    <form class="form" method=post action="{{ url_for('medfacility') }}">
     
-        <p style ="text-style:justify">Medical Facility ID
-        <input type = "text" name="facility_id" style = "float:middle" ></p>
-        <p style ="text-style:justify">Blood Type:
-        <select name="blood_type">
+        <p class="form-input-text">Medical Facility ID:
+        <input type="text" name="facility_id" class="form-input"></p>
+        <p class="form-input-text">Blood Type:
+        <select name="blood_type" class="form-input">
         <option value="A+">A+</option>   
         <option value="A-">A-</option> 
         <option value="B+">B+</option> 
@@ -29,16 +29,17 @@
         </select>        
         </p>      
 
-        <p style ="text-style:justify">Blood Amount:
-        <input type = "text" name="blood_amount" style = "float:middle"></p>
-        <p style ="text-style:justify">Request Type:
-        <select name="request_type">
-        <option value="Emergency">Emergency</option>   
-        <option value="nonemergency">Non Emergency</option> 
+        <p class="form-input-text">Blood Amount:
+        <input type="text" name="blood_amount" class="form-input"></p>
+        <p class="form-input-text">Request Type:
+        <select name="request_type" class="form-input">
+            <option value="nonemergency">Non Emergency</option> 
+            <option value="Emergency">Emergency</option>   
         </select>
     	</p>
-        <input type = "submit" value = "Make Request" name="submit" style = "float:middle">
+        <input type="submit" value="Make Request" name="submit" class="submit-button">
     </form>
+    <!-- <input type="submit" value="Make Request" name="submit" class="make-request-button"> -->
 </body>
 
 </html>

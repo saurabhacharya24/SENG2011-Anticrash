@@ -104,4 +104,49 @@ body {
   margin-left: 18%;
 }
 
+.page-title {
+  font-size: 24pt;
+}
+
+.form {
+  margin-top: 3%;
+  text-align: right;
+  width: 50%;
+  /* margin-left: 2%; */
+}
+
+.form-input {
+  position: fixed;
+  border: 1px solid grey;
+  width: 200px;
+  height: 25px;
+  font-size: 12pt;
+  left: 51%;
+}
+
+.form-input-text {
+  font-size: 16pt;
+  /* margin-right: 1%; */
+}
+
+.submit-button {
+  position: fixed;
+  border: 1px solid green;
+  background-color: green;
+  width: 150px;
+  height: 40px;
+  margin-top: 15px;
+  font-size: 14pt;
+  color: white;
+  padding: 5px;
+  right: 43%; 
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.submit-button:hover {
+  cursor: pointer;
+  background-color: white;
+  color: green;
+  transition: background-color 0.1s, color 0.1s;
+}
 /*# sourceMappingURL=index.css.map */
