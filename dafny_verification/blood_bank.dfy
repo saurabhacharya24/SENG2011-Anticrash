@@ -145,22 +145,28 @@ class BloodBank {
     // }
 
 
-    method checkFreshness(today:int, sample_id:int, btype:string, use_by:int, abn:bool, b_amount:int, added:bool) 
+    method checkFreshness(today:int, btype:string, use_by:int, abn:bool, b_amount:int, added:bool) 
     modifies this
     requires use_by > 0 && today > 0
     requires Valid()
-    ensures Valid()
     requires containsType(btype) && b_amount > 0
+    ensures Valid()
+    ensures containsType(btype) && b_amount > 0
+    ensures containsType(btype) && use_by > today && !abn && !added ==> blood[btype] == old(blood[btype]) + b_amount
+    ensures containsType(btype) && old(blood[btype]) - b_amount > 0 && (use_by <= today || abn)
+            ==> blood[btype] == old(blood[btype]) - b_amount
+
     {
         var expired:bool := is_expired(use_by, today);
 
         if !expired && !abn{
             if !added {
                 addBlood(btype, b_amount);
-            } else if blood[btype] - b_amount > 0 {
-                discardBlood(btype, b_amount);
             }
+        } else if blood[btype] - b_amount > 0 {
+                discardBlood(btype, b_amount);
         }
+
     }
 }
 
@@ -182,19 +188,49 @@ ensures expiry <= today ==> expired == true
 method Main(){
     var b := new BloodBank();
 
+    // test inital conditions for blood bank
     assert b.blood["A+"] == 0;
     assert b.critical["A+"];
 
+    // test adding 300ml into A+ bank
     b.addBlood("A+", 300);
     assert b.blood["A+"] == 300;
     
-
+    // test discarding 290ml into A+ bank
     b.discardBlood("A+", 290);
     assert b.blood["A+"] == 10;
 
+    // test adding 5000ml into A+ bank
     b.addBlood("A+", 5000);
     assert b.blood["A+"] == 5010;
 
-    // b.discardBlood("A+", 5011); Fails since we're trying to discard more blood than is available
+    // test discarding more blood than available
+    // b.discardBlood("A+", 5011); 
+    // -----> nb. Fails since we're trying to discard more blood than is available
+
+
+    // test check freshness (If expired, remove. If not expired and not abnormal, add to bank.)
+    var today:int, use_by:int, abn:bool, b_amount:int, added:bool;
+    today := 5;
+    use_by := 10;
+    abn := false;
+    b_amount := 90;
+    added := false;
+
+    b.checkFreshness(today, "A+", use_by, abn, b_amount, added);
+    assert b.blood["A+"] == 5100;
+
+
+    // test check freshness (If expired, remove. If not expired and not abnormal, add to bank.)
+    today := 5;
+    use_by := 1;
+    abn := false;
+    b_amount := 100;
+    added := true;
+
+    b.checkFreshness(today, "A+", use_by, abn, b_amount, added);
+    print b.blood["A+"];
+
+
 
 }
