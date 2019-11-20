@@ -39,6 +39,16 @@ class Make_requests(bloodbank_class.Blood_bank):
             self.can_complete = True
             self.decrease_inventory(self.blood_type, self.amount)
 
+            day, month, year = str(date.today().day), str(date.today().month), str(date.today().year)
+            today = day + "/" + month + "/" + year
+
+            conn = self.connect_to_db()
+            cur = conn.cursor()
+            sql_insert_req = """insert into requests (blood_type, quantity_needed, date_of_request, med_facility_id) 
+                                values (?, ?, ?, ?)"""
+            cur.execute(sql_insert_req, (self.blood_type, self.amount, today, self.medical_facility_id))
+            conn.commit()
+
             if blood_left == self.threshold[self.blood_type]:
                 self.critical = True
                 self.issuecriticalwarning()
@@ -52,6 +62,16 @@ class Make_requests(bloodbank_class.Blood_bank):
             self.can_complete = True
             self.decrease_inventory(self.blood_type, self.amount)
 
+            day, month, year = str(date.today().day), str(date.today().month), str(date.today().year)
+            today = day + "/" + month + "/" + year
+
+            conn = self.connect_to_db()
+            cur = conn.cursor()
+            sql_insert_req = """insert into requests (blood_type, quantity_needed, date_of_request, med_facility_id) 
+                                values (?, ?, ?, ?)"""
+            cur.execute(sql_insert_req, (self.blood_type, self.amount, today, self.medical_facility_id))
+            conn.commit()
+            
             if blood_left <= self.threshold[self.blood_type]:
                 self.critical = True
                 self.issuecriticalwarning()
