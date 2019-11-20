@@ -27,6 +27,27 @@
             {% endfor %}
             <br>
         </table>
+        <p class="blood-amounts-title"> Donor Samples </p>
+        <div class="samples-table">
+            <table class="blood-amounts-table">
+                <tr>
+                    <th> Donor ID </th>
+                    <th> Blood Type </th>
+                    <th> Location </th>
+                    <th> Use By Date </th> 
+                    <th> Amount (in ml) </th>
+                </tr>
+                {% for i in donor_list %}
+                <tr>
+                    <td> {{ i[0] }} </td>
+                    <td> {{ i[1] }} </td>
+                    <td> {{ i[2] }} </td>
+                    <td> {{ i[3] }} </td>
+                    <td> {{ i[4] }} </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
         <p class="blood-amounts-title"> Donors with abnormalities </p>
         <table class="blood-amounts-table">
             <tr>
