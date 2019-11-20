@@ -96,18 +96,33 @@ class BloodBank {
 
     // method checkCritical()
     // modifies this
+    // requires Valid()
     // requires forall i :: i in blood ==> blood[i] >= 0
-    // // requires forall i :: containsType(i) ==> if blood[i] < threshold[i] then critical[i] == true else critical[i] == false
+    // requires forall i :: containsType(i) ==> if blood[i] < threshold[i] then critical[i] == true else critical[i] == false
     // ensures Valid()
     // // ensures forall i :: i in blood ==> blood[i] >= 0
     // // ensures forall i :: containsType(i) ==> if blood[i] < threshold[i] then critical[i] == true else critical[i] == false
 
     // {
-    //     var key :| containsType(key);
-    //     if blood[key] >= threshold[key] {
-    //         critical := critical[key := false];
-    //     } else {
-    //         critical := critical[key := true];
+    //     var blood' := blood;
+    //     var threshold' := threshold;
+    //     while blood'.Keys != {} && threshold'.Keys != {} 
+    //     invariant blood'.Keys <= blood.Keys && threshold'.Keys <= threshold.Keys
+    //     invariant forall k | k in blood' :: blood'[k] == blood[k]
+    //     invariant forall k | k in threshold' :: threshold'[k] == threshold[k]
+    //     decreases blood'.Keys
+    //     decreases threshold'.Keys
+    //     {
+    //         var key :| key in blood';
+    //         var threshKey :| threshKey in threshold';
+    //         if blood[key] < threshold[threshKey] {
+    //             critical := critical[key := true];
+    //         } else {
+    //             critical := critical[key := false];
+    //         }
+
+    //         blood' := map key' | key' in blood' && key' != key :: blood'[key']; 
+    //         threshold' := map threshKey' | threshKey' in threshold' && threshKey' != threshKey :: threshold'[threshKey']; 
     //     }
     // }
 
