@@ -229,7 +229,7 @@ method Main(){
     added := true;
 
     b.checkFreshness(today, "A+", use_by, abn, b_amount, added);
-    print b.blood["A+"];
+    assert b.blood["A+"] == 5000;
 
 
 
