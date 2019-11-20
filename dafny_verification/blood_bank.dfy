@@ -17,11 +17,12 @@ class BloodBank {
         btype in blood && btype in threshold && btype in critical
     }
 
-    // predicate onlyModifies(btype:string)
-    // reads this
-    // {
-    //     forall i :: containsType(i)
-    // }
+    predicate isCritical(btype:string)
+    reads this
+    {
+        btype in critical && critical[btype]
+    }
+
 
     constructor ()
     // modifies this;
@@ -51,8 +52,8 @@ class BloodBank {
     requires quantity > 0
     ensures Valid()
     ensures key in blood ==> blood[key] == old(blood[key]) + quantity
-    ensures containsType(key) && blood[key] >= threshold[key] ==> critical[key] == false
-    ensures containsType(key) && blood[key] < threshold[key] ==> critical[key] == true
+    ensures containsType(key) && blood[key] >= threshold[key] ==> !isCritical(key)
+    ensures containsType(key) && blood[key] < threshold[key] ==> isCritical(key)
     {
         var amount:int := blood[key];
         var newAmount:int := amount + quantity;
@@ -78,6 +79,8 @@ class BloodBank {
     ensures forall i :: containsType(i) && old(containsType(i)) && i != key ==> blood[i] == old(blood[i])
                                                                          && critical[i] == old(critical[i])
                                                                          && threshold[i] == old(threshold[i])
+    ensures containsType(key) && blood[key] >= threshold[key] ==> !isCritical(key)
+    ensures containsType(key) && blood[key] < threshold[key] ==> isCritical(key)
     {
         var amount:int := blood[key];
         var newAmount:int := amount - quantity;
@@ -91,44 +94,54 @@ class BloodBank {
     }
 
 
-
-
-
-
-
-
-
-
-    // method discardBlood(btype:string, quantity:int):
-    // modifies this;
-    // requires Valid()
-
-
-
-    // method discardBlood(key:string, quantity:int)
-    // modifies this;
-    // requires Valid()
+    // method checkCritical()
+    // modifies this
+    // requires forall i :: i in blood ==> blood[i] >= 0
+    // // requires forall i :: containsType(i) ==> if blood[i] < threshold[i] then critical[i] == true else critical[i] == false
     // ensures Valid()
-    // requires containsType(key)
-    // ensures key in blood ==> blood[key] == old(blood[key]) - quantity
-    // ensures containsType(key) && blood[key] >= threshold[key] ==> critical[key] == false
-    // ensures containsType(key) && blood[key] < threshold[key] ==> critical[key] == true
-    // requires quantity > 0 && quantity < blood[key]
+    // // ensures forall i :: i in blood ==> blood[i] >= 0
+    // // ensures forall i :: containsType(i) ==> if blood[i] < threshold[i] then critical[i] == true else critical[i] == false
 
     // {
-    //     var amount:int := blood[key];
-    //     var newAmount:int := amount - quantity;
-    //     blood := blood[key := newAmount];
-
+    //     var key :| containsType(key);
     //     if blood[key] >= threshold[key] {
     //         critical := critical[key := false];
     //     } else {
     //         critical := critical[key := true];
     //     }
-        
-        
     // }
 
 
-   
+    method checkFreshness(today:int, sample_id:int, btype:string, use_by:int, abn:bool, b_amount:int, added:bool) 
+    modifies this
+    requires use_by > 0 && today > 0
+    requires Valid()
+    ensures Valid()
+    requires containsType(btype) && b_amount > 0
+    {
+        var expired:bool := is_expired(use_by, today);
+
+        if !expired && !abn{
+            if !added {
+                // addBlood(btype, b_amount)
+            } else if blood[btype] - b_amount > 0 {
+                // discardBlood(btype, b_amount)
+            }
+        }
+    }
+
+}
+
+
+method is_expired(expiry:int, today:int) returns (expired:bool)
+requires expiry > 0 && today > 0
+ensures expiry > today ==> expired == false
+ensures expiry <= today ==> expired == true
+{
+    if (expiry > today){
+        expired := false;
+    } else {
+        expired := true;
+    }
+
 }
