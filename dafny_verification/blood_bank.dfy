@@ -14,7 +14,15 @@ class BloodBank {
     predicate containsType(btype:string)
     reads this
     {
-        btype in blood && btype in threshold && btype in critical
+        btype in blood && btype in threshold && btype in critical &&
+        "A+" in blood && "A+" in threshold && "A+" in critical &&
+        "A-" in blood && "A-" in threshold && "A-" in critical &&
+        "B+" in blood && "B+" in threshold && "B+" in critical &&
+        "B-" in blood && "B-" in threshold && "B-" in critical &&
+        "O+" in blood && "O+" in threshold && "O+" in critical &&
+        "O-" in blood && "O-" in threshold && "O-" in critical &&
+        "AB+" in blood && "AB+" in threshold && "AB+" in critical &&
+        "AB-" in blood && "AB-" in threshold && "AB-" in critical
     }
 
     predicate isCritical(btype:string)
@@ -27,6 +35,15 @@ class BloodBank {
     constructor ()
     // modifies this;
     ensures Valid()
+    ensures "A+" in blood && "A+" in threshold && "A+" in critical
+    ensures "A-" in blood && "A-" in threshold && "A-" in critical
+    ensures "B+" in blood && "B+" in threshold && "B+" in critical
+    ensures "B-" in blood && "B-" in threshold && "B-" in critical
+    ensures "O+" in blood && "O+" in threshold && "O+" in critical
+    ensures "O-" in blood && "O-" in threshold && "O-" in critical
+    ensures "AB+" in blood && "AB+" in threshold && "AB+" in critical
+    ensures "AB-" in blood && "AB-" in threshold && "AB-" in critical
+    ensures forall i :: containsType(i) ==> blood[i] == 0 && critical[i] == true
     {
         blood := map["A+" := 0,  "A-":=0,
                      "B+" := 0,  "B-":=0,
@@ -51,9 +68,10 @@ class BloodBank {
     requires containsType(key)
     requires quantity > 0
     ensures Valid()
-    ensures key in blood ==> blood[key] == old(blood[key]) + quantity
+    ensures containsType(key) && blood[key] == old(blood[key]) + quantity
     ensures containsType(key) && blood[key] >= threshold[key] ==> !isCritical(key)
     ensures containsType(key) && blood[key] < threshold[key] ==> isCritical(key)
+    ensures containsType(key)
     {
         var amount:int := blood[key];
         var newAmount:int := amount + quantity;
@@ -96,18 +114,33 @@ class BloodBank {
 
     // method checkCritical()
     // modifies this
+    // requires Valid()
     // requires forall i :: i in blood ==> blood[i] >= 0
-    // // requires forall i :: containsType(i) ==> if blood[i] < threshold[i] then critical[i] == true else critical[i] == false
+    // requires forall i :: containsType(i) ==> if blood[i] < threshold[i] then critical[i] == true else critical[i] == false
     // ensures Valid()
     // // ensures forall i :: i in blood ==> blood[i] >= 0
     // // ensures forall i :: containsType(i) ==> if blood[i] < threshold[i] then critical[i] == true else critical[i] == false
 
     // {
-    //     var key :| containsType(key);
-    //     if blood[key] >= threshold[key] {
-    //         critical := critical[key := false];
-    //     } else {
-    //         critical := critical[key := true];
+    //     var blood' := blood;
+    //     var threshold' := threshold;
+    //     while blood'.Keys != {} && threshold'.Keys != {} 
+    //     invariant blood'.Keys <= blood.Keys && threshold'.Keys <= threshold.Keys
+    //     invariant forall k | k in blood' :: blood'[k] == blood[k]
+    //     invariant forall k | k in threshold' :: threshold'[k] == threshold[k]
+    //     decreases blood'.Keys
+    //     decreases threshold'.Keys
+    //     {
+    //         var key :| key in blood';
+    //         var threshKey :| threshKey in threshold';
+    //         if blood[key] < threshold[threshKey] {
+    //             critical := critical[key := true];
+    //         } else {
+    //             critical := critical[key := false];
+    //         }
+
+    //         blood' := map key' | key' in blood' && key' != key :: blood'[key']; 
+    //         threshold' := map threshKey' | threshKey' in threshold' && threshKey' != threshKey :: threshold'[threshKey']; 
     //     }
     // }
 
@@ -129,16 +162,6 @@ class BloodBank {
             }
         }
     }
-
-    method testBloodBank()
-    {
-        var b := new BloodBank();
-        var blood_type:string := "A+";
-        var retval:bool;
-        // retval := b.isCritical(blood_type);
-        b.addBlood(blood_type, 1000000);
-    }
-
 }
 
 
@@ -156,4 +179,22 @@ ensures expiry <= today ==> expired == true
 }
 
 
+method Main(){
+    var b := new BloodBank();
 
+    assert b.blood["A+"] == 0;
+    assert b.critical["A+"];
+
+    b.addBlood("A+", 300);
+    assert b.blood["A+"] == 300;
+    
+
+    b.discardBlood("A+", 290);
+    assert b.blood["A+"] == 10;
+
+    b.addBlood("A+", 5000);
+    assert b.blood["A+"] == 5010;
+
+    // b.discardBlood("A+", 5011); Fails since we're trying to discard more blood than is available
+
+}

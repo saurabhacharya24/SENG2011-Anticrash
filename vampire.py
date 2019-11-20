@@ -69,7 +69,13 @@ def admin():
     for btype in blood_amounts.keys():
         threshold[btype] = bank.get_threshold_level(btype)
 
-    return render_template("admin.html", amounts=blood_amounts, threshold=threshold, abn_donors=abn_donors_list)
+    sql_donor_list = """select donor_id, blood_type, location_of_donation, use_by_date, blood_amount from donor_samples"""
+    donor_list = cur.execute(sql_donor_list)
+
+    cur = conn.cursor()
+    sql_requests = """select * from requests"""
+    reqs = cur.execute(sql_requests)
+    return render_template("admin.html", amounts=blood_amounts, threshold=threshold, abn_donors=abn_donors_list, donor_list=donor_list, requests=reqs)
 
 @app.route("/gen_info")
 def gen_info():

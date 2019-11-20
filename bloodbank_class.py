@@ -66,7 +66,7 @@ class Blood_bank:
 
 
     def add_blood(self, b_type, quantity):
-        self.check_freshness()
+        # self.check_freshness()
 
         updated_blood = self.blood_amounts[b_type] + quantity
 
@@ -78,19 +78,19 @@ class Blood_bank:
         conn.commit()
 
 
-        self.check_critical()
+        # self.check_critical()
         self.disconnect_db(conn)
 
-        # self.check_freshness()
+        self.refresh_blood_amounts()
 
-    def contains_type(b_type):
+    def contains_type(self, b_type):
         if b_type in self.threshold and b_type in self.blood_amounts and b_type in self.critical_dict:
             return True
         else:
             return False
 
     def discard_blood(self, b_type, quantity):
-        self.check_freshness()
+        # self.check_freshness()
 
         updated_blood = self.blood_amounts[b_type] - quantity
 
@@ -101,10 +101,10 @@ class Blood_bank:
         cur.execute(sql_adjust_level, (updated_blood, b_type))
         conn.commit()
 
-        self.check_critical()
+        # self.check_critical()
         self.disconnect_db(conn)
 
-        # self.check_freshness()
+        self.refresh_blood_amounts()
 
     def refresh_blood_amounts(self):
         conn = self.connect_to_db()
@@ -134,8 +134,8 @@ class Blood_bank:
                                from donor_samples"""
         cur.execute(sql_donor_samples)
         donor_samples = cur.fetchall()
-        for i in donor_samples:
-            print(i)
+        # for i in donor_samples:
+        #     print(i)
 
         for sample in donor_samples:
             sid = sample[0]
@@ -158,7 +158,7 @@ class Blood_bank:
                 if added:
                     self.discard_blood(b_type, b_amount)
 
-        self.refresh_blood_amounts()
+        # self.refresh_blood_amounts()
         self.disconnect_db(conn)
 
     # Helper method to connect to db
