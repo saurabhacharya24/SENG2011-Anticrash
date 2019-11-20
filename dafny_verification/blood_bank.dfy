@@ -123,11 +123,20 @@ class BloodBank {
 
         if !expired && !abn{
             if !added {
-                // addBlood(btype, b_amount)
+                addBlood(btype, b_amount);
             } else if blood[btype] - b_amount > 0 {
-                // discardBlood(btype, b_amount)
+                discardBlood(btype, b_amount);
             }
         }
+    }
+
+    method testBloodBank()
+    {
+        var b := new BloodBank();
+        var blood_type:string := "A+";
+        var retval:bool;
+        // retval := b.isCritical(blood_type);
+        b.addBlood(blood_type, 1000000);
     }
 
 }
@@ -145,3 +154,6 @@ ensures expiry <= today ==> expired == true
     }
 
 }
+
+
+
