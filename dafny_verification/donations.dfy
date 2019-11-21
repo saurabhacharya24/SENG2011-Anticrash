@@ -43,7 +43,7 @@ class Donations{
     requires btypes.Length != 0
     requires str != []
     {
-        exists i::0<=i<btypes.Length && btypes[i]==str
+        exists i::0<=i<btypes.Length && btypes[i]==str 
     }
 
     predicate validate_donor_id(id: int)
@@ -51,6 +51,7 @@ class Donations{
     reads donor_id_list
     requires donor_id_list != null
     requires donor_id_list.Length != 0
+    ensures donor_id_list != null
     {
         exists i::0<=i<donor_id_list.Length && donor_id_list[i]==id
     }
@@ -64,45 +65,43 @@ class Donations{
 
     constructor()
     modifies this
-    modifies donor_id_list
-    modifies blood_type_list 
-    modifies btypes
+    // modifies donor_id_list
+    // modifies blood_type_list 
+    // modifies btypes
     //requires Valid()
+    // requires donor_id_list != null
     ensures Valid()
     ensures 0 < donor_id_list.Length <= 150
     ensures forall j::0<=j<donor_id_list.Length ==> donor_id_list[j]==j+1;
     {
-        donor_id_list:= new int[150];
-        assert donor_id_list != null;
-        var t := donor_id_list.Length;
-        assert t == 150;
+        donor_id_list := new int[150];
+        var donor_copy := new int[150];
+        // assert donor_id_list != null;
+        var copy_length := donor_copy.Length;
+        assert copy_length == 150;
         var i:=0;
-        while i < t
-        invariant 0 <= i <= t
-        invariant if donor_id_list != null then forall j::0<=j<i ==> donor_id_list[j]==j+1 else false;
+        while i < copy_length
+        invariant 0 <= i <= copy_length
+        invariant if donor_copy != null then forall j::0<=j<i ==> donor_copy[j]==j+1 else false;
         {
-            donor_id_list[i]:=i+1;
+            donor_copy[i]:=i+1;
             i:=i+1;
         }
-        assert donor_id_list.Length == 150;
-        assert if donor_id_list != null then forall i ::0<=i<donor_id_list.Length ==> donor_id_list[i]<=150 else false;
+        assert donor_copy.Length == 150;
+        assert if donor_copy != null then forall i ::0<=i<donor_copy.Length ==> donor_copy[i]<=150 else false;
         blood_type_list:= new string[0];
-        btypes := new string[8];
-        btypes[0], btypes[1], btypes[2], btypes[3], btypes[4], btypes[5], btypes[6], btypes[7]:= "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-";
+        var btypes_copy := new string[8];
+        btypes_copy[0], btypes_copy[1], btypes_copy[2], btypes_copy[3], btypes_copy[4], btypes_copy[5], btypes_copy[6], btypes_copy[7]:= "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-";
+       
         abnormalities := new bool[0];
         blood_amount := new int[0];
         added_to_bank := new bool[0];
+        btypes := btypes_copy;
+        donor_id_list := donor_copy;
     }
 
     method Accept_donation(id: int, b_type:string, abnormal:bool, amount:int)
-    modifies blood_type_list
-    modifies abnormalities
-    modifies blood_amount
-    modifies added_to_bank
-    modifies new_blood_type
-    modifies new_abnormalities
-    modifies new_blood_amount
-    modifies new_added_to_bank
+    modifies this
     requires Valid()
     requires validate_donor_id(id)
     requires validate_blood_amount(amount)
@@ -114,19 +113,20 @@ class Donations{
     ensures Valid()
     {
         new_blood_type := new string[blood_type_list.Length+1];
-        new_blood_type := blood_type_list;
+        // new_blood_type := blood_type_list;
+        forall (i | 0<=i<blood_type_list.Length ) { new_blood_type[i] := blood_type_list[i];}
         new_blood_type[blood_type_list.Length] := b_type;
 
         new_abnormalities := new bool[abnormalities.Length+1];
-        new_abnormalities := abnormalities;
+        forall (i | 0<=i<abnormalities.Length) { new_abnormalities[i] := abnormalities[i]; }
         new_abnormalities[abnormalities.Length] := abnormal;
 
         new_blood_amount := new int[blood_amount.Length+1];
-        new_blood_amount := blood_amount;
+        forall (i | 0<=i<blood_amount.Length) { new_blood_amount[i] := blood_amount[i]; }
         new_blood_amount[blood_amount.Length] := amount;
 
         new_added_to_bank := new bool[added_to_bank.Length+1];
-        new_added_to_bank := added_to_bank;
+        forall (i | 0<=i<added_to_bank.Length) { new_added_to_bank[i] := added_to_bank[i]; }
         new_added_to_bank[added_to_bank.Length] := false;
     }
 }
@@ -135,4 +135,3 @@ method Main(){
     var donate:= new Donations();
     donate.Accept_donation(5, "A+", false, 500);
 }
-
