@@ -73,27 +73,36 @@ class Donations{
     modifies this
     ensures Valid()
     {
-        
+        //?
     }
 
-    method Accept_donation()
-    modifies this
+    method Accept_donation(b_type:string, abnormal:bool, amount:int)
+    modifies blood_type_list
+    modifies abnormalities
+    modifies blood_amount
+    modifies added_to_bank
     requires Valid()
     requires validate_donor_id()
     requires validate_blood_amount()
     requires validate_blood_type()
-    
+    ensures blood_type_list.Length == old(blood_type_list).Length +1
+    ensures abnormalities.Length == old(abnormalities).Length +1
+    ensures blood_amount.Length == old(blood_amount).Length +1
+    ensures added_to_bank.Length == old(added_to_bank).Length +1
     ensures Valid()
     {
-
+        blood_type_list.Length := blood_type_list.Length+1;
+        blood_type_list[blood_type_list.Length] := b_type;
+        abnormalities.Length := abnormalities.Length+1;
+        abnormalities[abnormalities.Length] := abnormal;
+        blood_amount.Length := blood_amount.Length+1;
+        blood_amount[blood_amount.Length] := amount;
+        added_to_bank.Length := added_to_bank.Length+1;
+        added_to_bank[added_to_bank.Length] := false;
     }
-    
-    method Test_blood()
-    ensures Valid(){
-        if randint >95 {return true} else {return false};
-    } 
 }
 
 method Main(){
-//for testing by creating a new object of Donations class
+    var donate:= new Donations();
+    donate.Accept_donation("A+", false, 500);
 }
