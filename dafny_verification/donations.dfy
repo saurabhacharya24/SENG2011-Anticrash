@@ -2,16 +2,16 @@ class Donations{
    
     var donor_id_list: array<int> := new int[150];
     
-    var blood_type_list: array<string>;
+    var blood_type_list: array<string> := new string[0];
 
     var btypes: array<string> := new string[8];
     btypes[0], btypes[1], btypes[2], btypes[3], btypes[4], btypes[5], btypes[6], btypes[7]:= "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-";
 
-    var abnormalities: bool;
+    var abnormalities: array<bool> := new bool[0];
 
-    var blood_amount: int;
+    var blood_amount: array<int> := new int[0];
 
-    var added_to_bank: bool := false;
+    var added_to_bank: array<bool> := new bool[0];
 
     method IndexArray (donor_id_list: array<int>)
     modifies donor_id_list
@@ -73,7 +73,7 @@ class Donations{
     modifies this
     ensures Valid()
     {
-        //what goes here?
+        
     }
 
     method Accept_donation()
@@ -82,6 +82,7 @@ class Donations{
     requires validate_donor_id()
     requires validate_blood_amount()
     requires validate_blood_type()
+    
     ensures Valid()
     {
 
