@@ -30,38 +30,55 @@ class Donations{
  */
 
     predicate Valid()
-    requires donor_id_list.Length != 0
+    reads this
+    reads donor_id_list
     {
-        forall i ::0<=i<150 ==> donor_id_list[i]<=150
+        if donor_id_list != null then forall i ::0<=i<donor_id_list.Length ==> donor_id_list[i]<=150 else false
     }    
 
     predicate validate_blood_type(str: string)
+    reads this
+    reads btypes
+    requires btypes != null
+    requires btypes.Length != 0
+    requires str != []
     {
         exists i::0<=i<btypes.Length && btypes[i]==str
     }
 
     predicate validate_donor_id(id: int)
+    reads this
+    reads donor_id_list
+    requires donor_id_list != null
+    requires donor_id_list.Length != 0
     {
         exists i::0<=i<donor_id_list.Length && donor_id_list[i]==id
     }
 
     predicate validate_blood_amount(amount: int)
+    reads this
+    requires amount != 0
     {
         amount > 450 && amount < 550
     }
 
     constructor()
     modifies this
+    modifies donor_id_list
+    modifies blood_type_list 
+    modifies btypes
+    //requires Valid()
     ensures Valid()
-    ensures donor_id_list.Length <= 150
+    ensures 0 < donor_id_list.Length <= 150
     ensures forall j::0<=j<donor_id_list.Length ==> donor_id_list[j]==j+1;
     {
         donor_id_list:= new int[150];
-
+        assert donor_id_list != null;
+        var t := donor_id_list.Length;
         var i:=0;
-        while i<donor_id_list.Length
-        invariant 0<=i<donor_id_list.Length
-        invariant forall j::0<=j<i ==> donor_id_list[j]==j+1;
+        while i < t
+        invariant 0 <= i <= t
+        invariant if donor_id_list != null then forall j::0<=j<i ==> donor_id_list[j]==j+1 else false;
         {
             donor_id_list[i]:=i+1;
             i:=i+1;
