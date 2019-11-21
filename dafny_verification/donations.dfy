@@ -83,7 +83,8 @@ class Donations{
             donor_id_list[i]:=i+1;
             i:=i+1;
         }
-
+        assert 0 < donor_id_list.Length <= 150;
+        assert if donor_id_list != null then forall i ::0<=i<donor_id_list.Length ==> donor_id_list[i]<=150 else false;
         blood_type_list:= new string[0];
         btypes := new string[8];
         btypes[0], btypes[1], btypes[2], btypes[3], btypes[4], btypes[5], btypes[6], btypes[7]:= "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-";
