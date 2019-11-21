@@ -3,18 +3,19 @@ class Donations{
     var donor_id_list: array<int>;
     
     var blood_type_list: array<string>;
-
+    var new_blood_type : array<string>;
     var btypes: array<string>;
 
     var abnormalities: array<bool>;
-
+    var new_abnormalities: array<bool>;
     var blood_amount: array<int>;
-
+    var new_blood_amount : array<int>;
     var added_to_bank: array<bool>;
+    var new_added_to_bank: array<bool>;
 
  /*   method IndexArray (donor_id_list: array<int>)
     modifies donor_id_list
-    ensures donor_id_list.Length <= 150
+    ensures donor_id_list.Length = 150
     ensures forall j::0<=j<donor_id_list.Length ==> donor_id_list[j]==j+1;
     {
         var i:=0;
@@ -29,23 +30,23 @@ class Donations{
  */
 
     predicate Valid()
-    reads this{
+    requires donor_id_list.Length != 0
+    {
         forall i ::0<=i<150 ==> donor_id_list[i]<=150
     }    
 
     predicate validate_blood_type(str: string)
-    reads this{
+    {
         exists i::0<=i<btypes.Length && btypes[i]==str
     }
 
     predicate validate_donor_id(id: int)
-    reads this
     {
         exists i::0<=i<donor_id_list.Length && donor_id_list[i]==id
     }
 
     predicate validate_blood_amount(amount: int)
-    reads this{
+    {
         amount > 450 && amount < 550
     }
 
@@ -83,20 +84,27 @@ class Donations{
     requires validate_donor_id(id)
     requires validate_blood_amount(amount)
     requires validate_blood_type(b_type)
-    ensures blood_type_list.Length == old(blood_type_list).Length +1
-    ensures abnormalities.Length == old(abnormalities).Length +1
-    ensures blood_amount.Length == old(blood_amount).Length +1
-    ensures added_to_bank.Length == old(added_to_bank).Length +1
+    ensures new_blood_type.Length == blood_type_list.Length +1
+    ensures new_abnormalities.Length == abnormalities.Length +1
+    ensures new_blood_amount.Length == blood_amount.Length +1
+    ensures new_added_to_bank.Length == added_to_bank.Length +1
     ensures Valid()
     {
-        blood_type_list.Length := blood_type_list.Length+1;
-        blood_type_list[blood_type_list.Length] := b_type;
-        abnormalities.Length := abnormalities.Length+1;
-        abnormalities[abnormalities.Length] := abnormal;
-        blood_amount.Length := blood_amount.Length+1;
-        blood_amount[blood_amount.Length] := amount;
-        added_to_bank.Length := added_to_bank.Length+1;
-        added_to_bank[added_to_bank.Length] := false;
+        new_blood_type := new string[blood_type_list.Length+1];
+        new_blood_type := blood_type_list;
+        new_blood_type[blood_type_list.Length] := b_type;
+
+        new_abnormalities := new bool[abnormalities.Length+1];
+        new_abnormalities := abnormalities;
+        new_abnormalities[abnormalities.Length] := abnormal;
+
+        new_blood_amount := new int[blood_amount.Length+1];
+        new_blood_amount := blood_amount;
+        new_blood_amount[blood_amount.Length] := amount;
+
+        new_added_to_bank := new bool[added_to_bank.Length+1];
+        new_added_to_bank := added_to_bank;
+        new_added_to_bank[added_to_bank.Length] := false;
     }
 }
 
