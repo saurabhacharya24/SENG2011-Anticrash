@@ -33,7 +33,7 @@ class BloodBank {
 
 
     constructor ()
-    // modifies this;
+    modifies this
     ensures Valid()
     ensures "A+" in blood && "A+" in threshold && "A+" in critical
     ensures "A-" in blood && "A-" in threshold && "A-" in critical
