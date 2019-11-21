@@ -75,6 +75,7 @@ class Donations{
         donor_id_list:= new int[150];
         assert donor_id_list != null;
         var t := donor_id_list.Length;
+        assert t == 150;
         var i:=0;
         while i < t
         invariant 0 <= i <= t
@@ -83,7 +84,7 @@ class Donations{
             donor_id_list[i]:=i+1;
             i:=i+1;
         }
-        assert 0 < donor_id_list.Length <= 150;
+        assert donor_id_list.Length == 150;
         assert if donor_id_list != null then forall i ::0<=i<donor_id_list.Length ==> donor_id_list[i]<=150 else false;
         blood_type_list:= new string[0];
         btypes := new string[8];
@@ -98,6 +99,10 @@ class Donations{
     modifies abnormalities
     modifies blood_amount
     modifies added_to_bank
+    modifies new_blood_type
+    modifies new_abnormalities
+    modifies new_blood_amount
+    modifies new_added_to_bank
     requires Valid()
     requires validate_donor_id(id)
     requires validate_blood_amount(amount)
