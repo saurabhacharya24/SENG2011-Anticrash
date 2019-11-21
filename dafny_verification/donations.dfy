@@ -106,3 +106,6 @@ method Main(){
     var donate:= new Donations();
     donate.Accept_donation("A+", false, 500);
 }
+method Main(){
+//for testing by creating a new object of Donations class
+}
