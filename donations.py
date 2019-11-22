@@ -20,7 +20,8 @@ class Donations:
         valid_blood_amt = self.validate_blood_amt(self.blood_amount)
         if valid_donor and valid_blood_amt:
             #test blood for abnormalities
-            self.test_blood()
+            test = random.randint(0, 100)
+            self.test_blood(test)
             #change date format
             day, month, year = self.use_by_date.day, self.use_by_date.month, self.use_by_date.year
             self.use_by_date = str(day) + "/" + str(month) + "/" + str(year)
@@ -50,8 +51,8 @@ class Donations:
         else:
             return False
 
-    def test_blood(self):
-        test = random.randint(0, 100)
+    def test_blood(self, test):
+        # test = random.randint(0, 100)
         if(test > 95):
             self.abnormalities = True
         else:

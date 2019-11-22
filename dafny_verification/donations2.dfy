@@ -35,8 +35,9 @@ class Donations{
         amount >= 450 && amount <= 550
     }
 
+
     constructor(donorid:int, bloodtype:string, location_of_donation:string, blood_amount:int, date_of_donation:int)
-    // modifies this
+    modifies this
     ensures Valid()
     requires donorid>=0
     requires blood_amount >= 450 && blood_amount <= 550
@@ -59,12 +60,41 @@ class Donations{
         added := false;
     }
 
-    method Accept_donation(id: int, b_type:string, abnormal:bool, amount:int)
+    method Accept_donation(id: int, b_type:string, amount:int) returns (added: bool, retAbn: bool)
     modifies this
     requires Valid()
     ensures Valid()
+    ensures validBloodAmount(amount) && validBloodType(b_type) ==> added == true
+    ensures !validBloodAmount(amount) && !validBloodType(b_type) ==> added == false
     {
+        var test: int;
+        var hasAbn := testBlood(test);
+        
+        if amount >= 450 && amount <=550 {
+            added := true;
+            retAbn := hasAbn;
+        } 
+        else {
+            added := false;
+            retAbn := hasAbn;
+        }
+    }
 
+    method testBlood(randomNum: int) returns (b: bool)
+    modifies this`abn
+    requires Valid()
+    ensures Valid()
+    ensures 95>randomNum>=100 ==> abn == b == true
+    ensures 0<=randomNum<=95 ==> abn == b ==false
+    {
+        if randomNum>95 && randomNum<=100 {
+            abn := true;
+            b := true;
+        }
+        else {
+            abn := false;
+            b := false;
+        }
     }
 }
 
@@ -91,5 +121,13 @@ method Main(){
     btype := "A+";
     amount := 50;
     // var d2 := new Donations(donorid, btype, location, amount, date);
+
+    btype := "A+";
+    amount := 501;
+    var d3 := new Donations(donorid, btype, "A", amount, 20);
+
+    var hasAdded, abn := d3.Accept_donation(donorid, btype, amount);
+
+    assert hasAdded;
 
 }
