@@ -30,7 +30,6 @@ class Make_request {
     {
         btype in critical && critical[btype]
     }
-    
   	constructor ()
     modifies this
     ensures Valid()
@@ -42,7 +41,7 @@ class Make_request {
     ensures "O-" in inventory && "O-" in threshold && "O-" in critical
     ensures "AB+" in inventory && "AB+" in threshold && "AB+" in critical
     ensures "AB-" in inventory && "AB-" in threshold && "AB-" in critical
-
+    ensures forall i :: containsType(i) ==> inventory[i] == 1000000 && critical[i] == false
     {
         inventory := map["A+" := 1000000,  "A-":=1000000,
                      "B+" := 1000000,  "B-":=1000000,
@@ -68,12 +67,13 @@ class Make_request {
     requires threshold[key] > 0
     ensures Valid()
     ensures containsType(key)
-    ensures (key in inventory && inventory[key] - quantity > threshold[key]) ==> inventory[key] == old(inventory[key]) - quantity
-    ensures old(inventory[key]) - quantity <= threshold[key] ==> completed == false
-    ensures old(inventory[key]) - quantity > threshold[key] ==> completed == true    
+    ensures containsType(key) && (old(inventory[key]) - quantity > old(threshold[key])) ==> inventory[key] == old(inventory[key]) - quantity
+    ensures old(inventory[key]) - quantity <= old(threshold[key]) ==> completed == false && inventory[key] == old(inventory[key])
+    ensures old(inventory[key]) - quantity > old(threshold[key]) ==> completed == true    
     ensures forall i :: containsType(i) && old(containsType(i)) && i != key ==> inventory[i] == old(inventory[i])
                                                                          && critical[i] == old(critical[i])
                                                                          && threshold[i] == old(threshold[i])
+    ensures containsType(key) ==> threshold[key] == old(threshold[key])
     {
         var amount:int := inventory[key];
         var newAmount:int := amount - quantity;
@@ -104,6 +104,7 @@ class Make_request {
                                                                          && threshold[i] == old(threshold[i])
     ensures containsType(key) && inventory[key] >= threshold[key] ==> !isCritical(key)
     ensures containsType(key) && inventory[key] < threshold[key] ==> isCritical(key)
+    ensures containsType(key) ==> threshold[key] == old(threshold[key])
     {
         var amount:int := inventory[key];
         var newAmount:int := amount - quantity;
@@ -123,4 +124,26 @@ class Make_request {
         	completed := false;
         }
     }
+}
+
+method Main(){
+
+    var r := new Make_request();
+    assert r.inventory["A+"] == 1000000;
+
+    // Processing emergency request. Overrides threshold of 100000
+    var ret := r.process_emergency_request("A+", 950000);
+    assert r.inventory["A+"] == 50000 && ret;
+    
+    var r1 :=  new Make_request();
+    ret := r1.process_emergency_request("B+", 400);
+    assert r1.inventory["B+"] == 999600 && ret;
+
+
+    // Processing normal request. Rejected the request and inventory level
+    // remains the same since request crossed threshold levels
+    // assert r.inventory["B-"] == 1000000;
+    // assert r.threshold["B-"] == 100000;
+    // ret := r.process_normal_request("B-", 950000);
+    // assert r.inventory["B-"] == 1000000 && !ret;
 }
