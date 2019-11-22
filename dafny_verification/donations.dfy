@@ -1,137 +1,133 @@
 class Donations{
-   
-    var donor_id_list: array<int>;
-    
-    var blood_type_list: array<string>;
-    var new_blood_type : array<string>;
-    var btypes: array<string>;
+    var donor_id:int
+    var blood_type:string
+    var location:string
+    var donation_date:int
+    var useby_date:int
+    var abn:bool
+    var amount:int
+    var added:bool
 
-    var abnormalities: array<bool>;
-    var new_abnormalities: array<bool>;
-    var blood_amount: array<int>;
-    var new_blood_amount : array<int>;
-    var added_to_bank: array<bool>;
-    var new_added_to_bank: array<bool>;
-
- /*   method IndexArray (donor_id_list: array<int>)
-    modifies donor_id_list
-    ensures donor_id_list.Length = 150
-    ensures forall j::0<=j<donor_id_list.Length ==> donor_id_list[j]==j+1;
-    {
-        var i:=0;
-        while i<donor_id_list.Length
-        invariant 0<=i<donor_id_list.Length
-        invariant forall j::0<=j<i ==> donor_id_list[j]==j+1;
-        {
-            donor_id_list[i]:=i+1;
-            i:=i+1;
-        }
-    }
- */
 
     predicate Valid()
     reads this
-    reads donor_id_list
     {
-        if donor_id_list != null then forall i ::0<=i<donor_id_list.Length ==> donor_id_list[i]<=150 else false
+        useby_date - donation_date == 42
+        && donor_id >=0 
+        && validBloodType(blood_type)
+        && validBloodAmount(amount)
     }    
 
-    predicate validate_blood_type(str: string)
-    reads this
-    reads btypes
-    requires btypes != null
-    requires btypes.Length != 0
-    requires str != []
+    predicate validBloodType(str: string)
     {
-        exists i::0<=i<btypes.Length && btypes[i]==str 
+        str == "A+" ||
+        str == "A-" ||
+        str == "B+" ||
+        str == "B-" ||
+        str == "O+" ||
+        str == "O-" ||
+        str == "AB+" ||
+        str == "AB-"
     }
 
-    predicate validate_donor_id(id: int)
-    reads this
-    reads donor_id_list
-    requires donor_id_list != null
-    requires donor_id_list.Length != 0
-    ensures donor_id_list != null
+    predicate validBloodAmount(amount: int)
     {
-        exists i::0<=i<donor_id_list.Length && donor_id_list[i]==id
+        amount >= 450 && amount <= 550
     }
 
-    predicate validate_blood_amount(amount: int)
-    reads this
-    requires amount != 0
-    {
-        amount > 450 && amount < 550
-    }
 
-    constructor()
+    constructor(donorid:int, bloodtype:string, location_of_donation:string, blood_amount:int, date_of_donation:int)
     modifies this
-    // modifies donor_id_list
-    // modifies blood_type_list 
-    // modifies btypes
-    //requires Valid()
-    // requires donor_id_list != null
     ensures Valid()
-    ensures 0 < donor_id_list.Length <= 150
-    ensures forall j::0<=j<donor_id_list.Length ==> donor_id_list[j]==j+1;
+    requires donorid>=0
+    requires blood_amount >= 450 && blood_amount <= 550
+    requires bloodtype == "A+" ||
+        bloodtype == "A-" ||
+        bloodtype == "B+" ||
+        bloodtype == "B-" ||
+        bloodtype == "O+" ||
+        bloodtype == "O-" ||
+        bloodtype == "AB+" ||
+        bloodtype == "AB-"    
     {
-        donor_id_list := new int[150];
-        var donor_copy := new int[150];
-        // assert donor_id_list != null;
-        var copy_length := donor_copy.Length;
-        assert copy_length == 150;
-        var i:=0;
-        while i < copy_length
-        invariant 0 <= i <= copy_length
-        invariant if donor_copy != null then forall j::0<=j<i ==> donor_copy[j]==j+1 else false;
-        {
-            donor_copy[i]:=i+1;
-            i:=i+1;
-        }
-        assert donor_copy.Length == 150;
-        assert if donor_copy != null then forall i ::0<=i<donor_copy.Length ==> donor_copy[i]<=150 else false;
-        blood_type_list:= new string[0];
-        var btypes_copy := new string[8];
-        btypes_copy[0], btypes_copy[1], btypes_copy[2], btypes_copy[3], btypes_copy[4], btypes_copy[5], btypes_copy[6], btypes_copy[7]:= "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-";
-       
-        abnormalities := new bool[0];
-        blood_amount := new int[0];
-        added_to_bank := new bool[0];
-        btypes := btypes_copy;
-        donor_id_list := donor_copy;
+        donor_id := donorid;
+        blood_type := bloodtype;
+        location := location_of_donation;
+        donation_date := date_of_donation;
+        useby_date := date_of_donation + 42;
+        abn := false;
+        amount := blood_amount;
+        added := false;
     }
 
-    method Accept_donation(id: int, b_type:string, abnormal:bool, amount:int)
+    method Accept_donation(id: int, b_type:string, amount:int) returns (added: bool, retAbn: bool)
     modifies this
     requires Valid()
-    requires validate_donor_id(id)
-    requires validate_blood_amount(amount)
-    requires validate_blood_type(b_type)
-    ensures new_blood_type.Length == blood_type_list.Length +1
-    ensures new_abnormalities.Length == abnormalities.Length +1
-    ensures new_blood_amount.Length == blood_amount.Length +1
-    ensures new_added_to_bank.Length == added_to_bank.Length +1
     ensures Valid()
+    ensures validBloodAmount(amount) && validBloodType(b_type) ==> added == true
+    ensures !validBloodAmount(amount) && !validBloodType(b_type) ==> added == false
     {
-        new_blood_type := new string[blood_type_list.Length+1];
-        // new_blood_type := blood_type_list;
-        forall (i | 0<=i<blood_type_list.Length ) { new_blood_type[i] := blood_type_list[i];}
-        new_blood_type[blood_type_list.Length] := b_type;
+        var test: int;
+        var hasAbn := testBlood(test);
+        
+        if amount >= 450 && amount <=550 {
+            added := true;
+            retAbn := hasAbn;
+        } 
+        else {
+            added := false;
+            retAbn := hasAbn;
+        }
+    }
 
-        new_abnormalities := new bool[abnormalities.Length+1];
-        forall (i | 0<=i<abnormalities.Length) { new_abnormalities[i] := abnormalities[i]; }
-        new_abnormalities[abnormalities.Length] := abnormal;
-
-        new_blood_amount := new int[blood_amount.Length+1];
-        forall (i | 0<=i<blood_amount.Length) { new_blood_amount[i] := blood_amount[i]; }
-        new_blood_amount[blood_amount.Length] := amount;
-
-        new_added_to_bank := new bool[added_to_bank.Length+1];
-        forall (i | 0<=i<added_to_bank.Length) { new_added_to_bank[i] := added_to_bank[i]; }
-        new_added_to_bank[added_to_bank.Length] := false;
+    method testBlood(randomNum: int) returns (b: bool)
+    modifies this`abn
+    requires Valid()
+    ensures Valid()
+    ensures 95>randomNum>=100 ==> abn == b == true
+    ensures 0<=randomNum<=95 ==> abn == b ==false
+    {
+        if randomNum>95 && randomNum<=100 {
+            abn := true;
+            b := true;
+        }
+        else {
+            abn := false;
+            b := false;
+        }
     }
 }
 
 method Main(){
-    var donate:= new Donations();
-    donate.Accept_donation(5, "A+", false, 500);
+    var donorid:int, btype:string, location:string, amount:int, date:int;
+    donorid := 1;
+    btype := "A+";
+    location := "123 Fake St";
+    amount := 500;
+    date := 10;
+    var d1 := new Donations(donorid, btype, location, amount, date);
+
+    // invalid id
+    donorid := -1;
+    // var d2 := new Donations(donorid, btype, location, amount, date);
+
+
+    // invalid type
+    donorid := 1;
+    btype := "P+";
+    // var d2 := new Donations(donorid, btype, location, amount, date);
+
+    // invalid amount
+    btype := "A+";
+    amount := 50;
+    // var d2 := new Donations(donorid, btype, location, amount, date);
+
+    btype := "A+";
+    amount := 501;
+    var d3 := new Donations(donorid, btype, "A", amount, 20);
+
+    var hasAdded, abn := d3.Accept_donation(donorid, btype, amount);
+
+    assert hasAdded;
+
 }
